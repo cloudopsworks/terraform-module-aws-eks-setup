@@ -47,7 +47,7 @@ variable "policy_iam_users" {
   description = "IAM User lists to apply to policies"
 }
 
-variable "access_cidr" {
+variable "access_cidrs" {
   type        = list(string)
   default     = []
   description = "CIDR list to allow access to EKS cluster"

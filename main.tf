@@ -96,7 +96,7 @@ module "this" {
 
   cluster_endpoint_private_access      = true
   cluster_endpoint_public_access       = true
-  cluster_endpoint_public_access_cidrs = var.access_cidr
+  cluster_endpoint_public_access_cidrs = var.access_cidrs
 
   cluster_addons = {
     coredns = {
