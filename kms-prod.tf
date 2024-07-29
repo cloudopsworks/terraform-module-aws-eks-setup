@@ -111,7 +111,7 @@ data "aws_iam_policy_document" "kms_policy" {
 }
 
 resource "aws_kms_key" "cluster_kms" {
-  description             = "EKS eks-${local.system_name} Cluster Encryption Key"
+  description             = "EKS ${local.cluster_name} Cluster Encryption Key"
   deletion_window_in_days = 10
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.kms_policy.json
@@ -122,5 +122,5 @@ resource "aws_kms_key" "cluster_kms" {
 
 resource "aws_kms_alias" "cluster_kms" {
   target_key_id = aws_kms_key.cluster_kms.key_id
-  name          = "alias/encrypt/eks-${local.system_name}"
+  name          = "alias/encrypt/${local.cluster_name}"
 }

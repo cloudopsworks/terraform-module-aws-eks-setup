@@ -1,8 +1,9 @@
-data "aws_iam_role" "forward-bastion" {
+data "aws_iam_role" "forward_bastion" {
   name = var.vpc.bastion_role.name
 }
 
 locals {
+  cluster_name = "eks-${local.system_name}"
   node_group_defaults = {
     disk_size       = 30
     instance_types  = ["m6i.xlarge", "m5.xlarge", "m5a.xlarge", "m6a.xlarge"]
@@ -34,8 +35,8 @@ locals {
     iam_role_arn    = aws_iam_role.worker.arn
 
     tags = {
-      "k8s.io/cluster-autoscaler/enabled"             = "true"
-      "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+      "k8s.io/cluster-autoscaler/enabled"               = "true"
+      "k8s.io/cluster-autoscaler/${local.cluster_name}" = "owned"
     }
   }
 
@@ -78,14 +79,14 @@ locals {
     iam_role_arn    = aws_iam_role.worker.arn
 
     tags = {
-      "k8s.io/cluster-autoscaler/enabled"             = "true"
-      "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+      "k8s.io/cluster-autoscaler/enabled"               = "true"
+      "k8s.io/cluster-autoscaler/${local.cluster_name}" = "owned"
     }
   }
 
   map_roles = concat([
     {
-      rolearn  = data.aws_iam_role.forward-bastion.arn
+      rolearn  = data.aws_iam_role.forward_bastion.arn
       username = "bastionRole"
       groups   = ["system:masters"]
     }
@@ -98,7 +99,7 @@ module "this" {
   version = "~> 20.00"
 
   vpc_id              = var.vpc.vpc_id
-  cluster_name        = var.cluster_name
+  cluster_name        = local.cluster_name
   subnet_ids          = var.vpc.private_subnets
   cluster_version     = var.cluster_version
   authentication_mode = "API_AND_CONFIG_MAP"
@@ -166,11 +167,11 @@ module "this" {
   self_managed_node_group_defaults = local.self_node_group_defaults
   self_managed_node_groups         = var.self_node_groups
 
-  tags = module.tags.locals.common_tags
+  tags = local.all_tags
   cluster_tags = merge(
     {
-      Name = var.cluster_name
+      Name = local.cluster_name
     },
-    module.tags.locals.common_tags
+    local.all_tags
   )
 }

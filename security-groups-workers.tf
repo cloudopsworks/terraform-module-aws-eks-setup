@@ -91,8 +91,8 @@ resource "aws_security_group" "worker" {
   }
 
   tags = merge(local.all_tags, tomap({
-    "Name"                                      = "eks-worker-sg-${local.system_name}"
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "Name"                                        = "eks-worker-sg-${local.system_name}"
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }))
 }
 

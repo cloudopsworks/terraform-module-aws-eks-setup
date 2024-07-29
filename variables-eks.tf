@@ -8,9 +8,6 @@ variable "vpc" {
   description = "VPC configuration entry"
   type        = any
 }
-variable "cluster_name" {
-  type = string
-}
 
 variable "extend_node_user_data" {
   default = ""
