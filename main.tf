@@ -1,7 +1,3 @@
-data "aws_iam_role" "forward_bastion" {
-  name = var.vpc.bastion_role.name
-}
-
 locals {
   cluster_name = "eks-${local.system_name}"
   node_group_defaults = {
