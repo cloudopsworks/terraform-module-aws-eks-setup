@@ -36,7 +36,7 @@ resource "aws_iam_role_policy_attachment" "att-master-ServicePolicy" {
 
 
 resource "aws_iam_role" "worker" {
-  name               = "eks-worker-role-${local.all_tags}"
+  name               = "eks-worker-role-${local.system_name}"
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -55,7 +55,7 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "worker" {
-  name = "eks-kms-access-${local.all_tags}"
+  name = "eks-kms-access-${local.system_name}"
   role = aws_iam_role.worker.id
 
   policy = <<POLICY
@@ -76,7 +76,7 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "worker_csi" {
-  name = "eks-csi-volume-mgmt-${local.all_tags}"
+  name = "eks-csi-volume-mgmt-${local.system_name}"
   role = aws_iam_role.worker.id
 
   policy = <<POLICY
@@ -113,7 +113,7 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "worker_autoscaling" {
-  name = "eks-autoscaling-access-${local.all_tags}"
+  name = "eks-autoscaling-access-${local.system_name}"
   role = aws_iam_role.worker.id
 
   policy = <<POLICY
@@ -142,7 +142,7 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "worker_ecrwrite" {
-  name = "eks-ecr-worker-write-${local.all_tags}"
+  name = "eks-ecr-worker-write-${local.system_name}"
   role = aws_iam_role.worker.id
 
   policy = <<POLICY
@@ -169,7 +169,7 @@ POLICY
 }
 
 # resource "aws_iam_role_policy" "worker_s3-backup" {
-#   name = "s3-worker-write-${local.all_tags}"
+#   name = "s3-worker-write-${local.system_name}"
 #   role = aws_iam_role.worker.id
 #
 #   policy = <<POLICY
@@ -208,7 +208,7 @@ POLICY
 # }
 
 # resource "aws_iam_role_policy" "worker_route53" {
-#   name = "Route53Writer-${local.all_tags}"
+#   name = "Route53Writer-${local.system_name}"
 #   role = aws_iam_role.worker.id
 #
 #   policy = <<POLICY
@@ -247,7 +247,7 @@ POLICY
 # }
 
 resource "aws_iam_role_policy" "worker_cloudwatch_rw" {
-  name = "eks-cw-worker-write-${local.all_tags}"
+  name = "eks-cw-worker-write-${local.system_name}"
   role = aws_iam_role.worker.id
 
   policy = <<POLICY
@@ -282,7 +282,7 @@ POLICY
 }
 
 resource "aws_iam_instance_profile" "worker" {
-  name = "eks-worker-role-${local.all_tags}"
+  name = "eks-worker-role-${local.system_name}"
   role = aws_iam_role.worker.name
 }
 
