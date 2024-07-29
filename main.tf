@@ -84,13 +84,7 @@ locals {
     }
   }
 
-  map_roles = concat([
-    {
-      rolearn  = data.aws_iam_role.forward_bastion.arn
-      username = "bastionRole"
-      groups   = ["system:masters"]
-    }
-  ], var.map_roles)
+  map_roles = var.map_roles
 }
 
 
