@@ -1,3 +1,9 @@
+##
+# (c) 2024 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+
 resource "aws_eks_access_entry" "cluster_access_entry" {
   for_each = { for item in var.map_users : item.username => item }
 

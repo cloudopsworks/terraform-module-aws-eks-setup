@@ -1,7 +1,13 @@
+##
+# (c) 2024 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+
 locals {
   cluster_name = "eks-${local.system_name}"
   node_group_defaults = {
-    use_name_prefix  = true
+    use_name_prefix = true
     disk_size       = 30
     instance_types  = ["m6i.xlarge", "m5.xlarge", "m5a.xlarge", "m6a.xlarge"]
     subnet_ids      = var.vpc.private_subnets

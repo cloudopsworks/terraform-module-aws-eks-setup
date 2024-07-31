@@ -1,3 +1,9 @@
+##
+# (c) 2024 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+
 output "cluster_name" {
   value = local.cluster_name
 }
@@ -49,6 +55,65 @@ output "cluster_sg_worker" {
   }
 }
 
-# output "backup_bucket" {
-#   value = var.cluster_backup_bucket
-# }
+output "lb_irsa_role" {
+  value = {
+    arn  = module.lb_irsa_role.iam_role_arn
+    name = module.lb_irsa_role.iam_role_name
+  }
+}
+
+output "vpc_cni_irsa_role" {
+  value = {
+    arn  = module.vpc_cni_irsa_role.iam_role_arn
+    name = module.vpc_cni_irsa_role.iam_role_name
+  }
+}
+
+output "ebs_csi_irsa_role" {
+  value = {
+    arn  = module.ebs_csi_irsa_role.iam_role_arn
+    name = module.ebs_csi_irsa_role.iam_role_name
+  }
+}
+
+output "efs_csi_irsa_role" {
+  value = {
+    arn  = module.efs_csi_irsa_role.iam_role_arn
+    name = module.efs_csi_irsa_role.iam_role_name
+  }
+}
+
+output "ext_dns_irsa_role" {
+  value = {
+    arn  = module.ext_dns_irsa_role.iam_role_arn
+    name = module.ext_dns_irsa_role.iam_role_name
+  }
+}
+
+output "autoscaler_irsa_role" {
+  value = {
+    arn  = module.autoscaler_irsa_role.iam_role_arn
+    name = module.autoscaler_irsa_role.iam_role_name
+  }
+}
+
+output "cert_mgr_irsa_role" {
+  value = {
+    arn  = module.cert_mgr_irsa_role.iam_role_arn
+    name = module.cert_mgr_irsa_role.iam_role_name
+  }
+}
+
+output "s3_csi_irsa_role" {
+  value = {
+    arn  = module.s3_csi_irsa_role.iam_role_arn
+    name = module.s3_csi_irsa_role.iam_role_name
+  }
+}
+
+output "velero_irsa_role" {
+  value = {
+    arn  = module.velero_irsa_role.iam_role_arn
+    name = module.velero_irsa_role.iam_role_name
+  }
+}

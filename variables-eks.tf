@@ -36,19 +36,25 @@ variable "self_node_groups" {
 }
 
 variable "cluster_version" {
+  description = "Kubernetes Version for EKS setup/upgrade"
   type        = string
   default     = "1.20"
-  description = "Kubernetes Version for EKS setup/upgrade"
 }
 
 variable "policy_iam_users" {
+  description = "IAM User lists to apply to policies"
   type        = list(string)
   default     = []
-  description = "IAM User lists to apply to policies"
 }
 
 variable "access_cidrs" {
+  description = "CIDR list to allow access to EKS cluster"
   type        = list(string)
   default     = []
-  description = "CIDR list to allow access to EKS cluster"
+}
+
+variable "irsa" {
+  description = "IRSA configuration settings"
+  type        = any
+  default     = {}
 }
