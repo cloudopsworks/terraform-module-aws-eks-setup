@@ -14,7 +14,7 @@ module "vpc_cni_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.vpc_cni.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -29,7 +29,7 @@ module "lb_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.lb.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -45,7 +45,7 @@ module "ebs_csi_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.ebs_csi.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -60,7 +60,7 @@ module "efs_csi_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.efs_csi.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -76,7 +76,7 @@ module "ext_dns_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.external_dns.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -92,7 +92,7 @@ module "autoscaler_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.cluster_autoscaler.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -108,7 +108,7 @@ module "cert_mgr_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.cert_manager.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -126,7 +126,7 @@ module "s3_csi_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.s3_csi.namespace_service_accounts
     }
   }
   tags = local.all_tags
@@ -142,7 +142,7 @@ module "velero_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = var.irsa.namespace_service_accounts
+      namespace_service_accounts = var.irsa.velero.namespace_service_accounts
     }
   }
   tags = local.all_tags
