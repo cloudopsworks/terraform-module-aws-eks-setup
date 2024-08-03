@@ -55,7 +55,7 @@ resource "aws_security_group_rule" "eks_master_ingress_internal" {
   protocol          = "tcp"
   security_group_id = aws_security_group.master.id
   type              = "ingress"
-
+}
 
 resource "aws_security_group_rule" "eks_master_ingress_workstation_https" {
   count = length(try(var.vpc.vpn_accesses, []))
