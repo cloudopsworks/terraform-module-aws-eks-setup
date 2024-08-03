@@ -45,6 +45,18 @@ resource "aws_security_group" "master" {
   }))
 }
 
+resource "aws_security_group_rule" "eks_master_ingress_internal" {
+  count = length(try(var.vpc.local_network_cidrs, []))
+
+  cidr_blocks       = [var.vpc.local_network_cidrs[count.index]]
+  description       = "Allow Local Network ${var.vpc.local_network_cidrs[count.index]} to communicate with the cluster API Server"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.master.id
+  type              = "ingress"
+
+
 resource "aws_security_group_rule" "eks_master_ingress_workstation_https" {
   count = length(try(var.vpc.vpn_accesses, []))
 
