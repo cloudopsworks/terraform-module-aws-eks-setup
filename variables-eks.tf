@@ -58,3 +58,15 @@ variable "irsa" {
   type        = any
   default     = {}
 }
+
+variable "public_api_server" {
+  description = "Public API server access"
+  type        = bool
+  default     = false
+}
+
+variable "private_api_server" {
+  description = "Private API server access"
+  type        = bool
+  default     = true
+}

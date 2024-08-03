@@ -101,8 +101,8 @@ module "this" {
   cluster_version     = var.cluster_version
   authentication_mode = "API_AND_CONFIG_MAP"
 
-  cluster_endpoint_private_access      = true
-  cluster_endpoint_public_access       = true
+  cluster_endpoint_private_access      = var.private_api_server
+  cluster_endpoint_public_access       = var.public_api_server
   cluster_endpoint_public_access_cidrs = var.access_cidrs
 
   cluster_addons = {
