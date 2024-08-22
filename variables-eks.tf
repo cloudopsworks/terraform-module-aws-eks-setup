@@ -70,3 +70,15 @@ variable "private_api_server" {
   type        = bool
   default     = true
 }
+
+variable "node_volume_size" {
+  description = "Default Pools Node Disk Size, in GB"
+  type        = number
+  default     = 30
+}
+
+variable "node_volume_type" {
+  description = "Default Pools Node Disk Type, gp2 | gp3 | io1 | sc1 | st1"
+  type        = string
+  default     = "gp2"
+}

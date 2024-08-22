@@ -28,8 +28,10 @@ locals {
       xvda = {
         device_name = "/dev/xvda"
         ebs = {
-          encrypted  = true
-          kms_key_id = aws_kms_key.cluster_kms.arn
+          encrypted   = true
+          volume_size = var.node_volume_size
+          volume_type = var.node_volume_type
+          kms_key_id  = aws_kms_key.cluster_kms.arn
         }
       }
     }
