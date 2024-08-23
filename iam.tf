@@ -7,7 +7,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "master" {
-  name               = "eks-role-${local.system_name}"
+  name               = "eks-${local.system_name}-role"
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -23,11 +23,18 @@ resource "aws_iam_role" "master" {
 }
 POLICY
   tags               = local.all_tags
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_instance_profile" "master" {
-  name = "eks-role-${local.system_name}"
+  name = "eks-${local.system_name}-role"
   role = aws_iam_role.master.name
+  tags = local.all_tags
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "att-master-ClusterPolicy" {
@@ -42,7 +49,7 @@ resource "aws_iam_role_policy_attachment" "att-master-ServicePolicy" {
 
 
 resource "aws_iam_role" "worker" {
-  name               = "eks-worker-role-${local.system_name}"
+  name               = "eks-${local.system_name}-worker-role"
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -57,13 +64,15 @@ resource "aws_iam_role" "worker" {
   ]
 }
 POLICY
-
+  tags               = local.all_tags
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy" "worker" {
-  name = "eks-kms-access-${local.system_name}"
-  role = aws_iam_role.worker.id
-
+  name   = "eks-${local.system_name}-kms-access"
+  role   = aws_iam_role.worker.id
   policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -78,13 +87,11 @@ resource "aws_iam_role_policy" "worker" {
   ]
 }
 POLICY
-
 }
 
 resource "aws_iam_role_policy" "worker_csi" {
-  name = "eks-csi-volume-mgmt-${local.system_name}"
-  role = aws_iam_role.worker.id
-
+  name   = "eks-${local.system_name}-csi-volume-mgmt"
+  role   = aws_iam_role.worker.id
   policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -119,9 +126,8 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "worker_autoscaling" {
-  name = "eks-autoscaling-access-${local.system_name}"
-  role = aws_iam_role.worker.id
-
+  name   = "eks-${local.system_name}-autoscaling-access"
+  role   = aws_iam_role.worker.id
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -148,9 +154,8 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "worker_ecrwrite" {
-  name = "eks-ecr-worker-write-${local.system_name}"
-  role = aws_iam_role.worker.id
-
+  name   = "eks-${local.system_name}-ecr-worker-write"
+  role   = aws_iam_role.worker.id
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -253,9 +258,8 @@ POLICY
 # }
 
 resource "aws_iam_role_policy" "worker_cloudwatch_rw" {
-  name = "eks-cw-worker-write-${local.system_name}"
-  role = aws_iam_role.worker.id
-
+  name   = "eks-${local.system_name}-cw-worker-write"
+  role   = aws_iam_role.worker.id
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -288,8 +292,12 @@ POLICY
 }
 
 resource "aws_iam_instance_profile" "worker" {
-  name = "eks-worker-role-${local.system_name}"
+  name = "eks-${local.system_name}-worker-role"
   role = aws_iam_role.worker.name
+  tags = local.all_tags
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "worker_AmazonEKSWorkerNodePolicy" {

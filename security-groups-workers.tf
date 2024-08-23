@@ -5,7 +5,7 @@
 #
 
 resource "aws_security_group" "cluster_default" {
-  name        = "eks-def-sg-${local.system_name}"
+  name        = "eks-${local.system_name}-def-sg"
   description = "Default Cluster Security Group"
   vpc_id      = var.vpc.vpc_id
 
@@ -24,12 +24,15 @@ resource "aws_security_group" "cluster_default" {
   }
 
   tags = merge(local.all_tags, tomap({
-    "Name" = "eks-def-sg-${local.system_name}"
+    "Name" = "eks-${local.system_name}-def-sg"
   }))
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "master" {
-  name        = "eks-master-sg-${local.system_name}"
+  name        = "eks-${local.system_name}-master-sg"
   description = "Access Cluster Security Group"
   vpc_id      = var.vpc.vpc_id
 
@@ -43,6 +46,9 @@ resource "aws_security_group" "master" {
   tags = merge(local.all_tags, tomap({
     "Name" = "eks-master-sg-${local.system_name}"
   }))
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "eks_master_ingress_internal" {
@@ -96,7 +102,7 @@ resource "aws_security_group_rule" "eks_master_ingress_bastion" {
 
 
 resource "aws_security_group" "worker" {
-  name        = "eks-worker-sg-${local.system_name}"
+  name        = "eks-${local.system_name}-worker-sg"
   description = "Security group for all nodes in the cluster"
   vpc_id      = var.vpc.vpc_id
 
@@ -111,6 +117,9 @@ resource "aws_security_group" "worker" {
     "Name"                                        = "eks-worker-sg-${local.system_name}"
     "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }))
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "worker_ingress_bastion" {
