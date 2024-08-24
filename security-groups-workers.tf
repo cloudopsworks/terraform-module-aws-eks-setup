@@ -44,7 +44,7 @@ resource "aws_security_group" "master" {
   }
 
   tags = merge(local.all_tags, tomap({
-    "Name" = "eks-master-sg-${local.system_name}"
+    "Name" = "eks-${local.system_name}-master-sg"
   }))
   lifecycle {
     create_before_destroy = true
@@ -114,7 +114,7 @@ resource "aws_security_group" "worker" {
   }
 
   tags = merge(local.all_tags, tomap({
-    "Name"                                        = "eks-worker-sg-${local.system_name}"
+    "Name"                                        = "eks-${local.system_name}-worker-sg"
     "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }))
   lifecycle {
