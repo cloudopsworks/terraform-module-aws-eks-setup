@@ -17,7 +17,8 @@ module "vpc_cni_irsa_role" {
       namespace_service_accounts = try(var.irsa.vpc_cni.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.vpc_cni.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "lb_irsa_role" {
@@ -32,7 +33,8 @@ module "lb_irsa_role" {
       namespace_service_accounts = try(var.irsa.lb.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.lb.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "ebs_csi_irsa_role" {
@@ -48,7 +50,8 @@ module "ebs_csi_irsa_role" {
       namespace_service_accounts = try(var.irsa.ebs_csi.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.ebs_csi.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "efs_csi_irsa_role" {
@@ -63,7 +66,8 @@ module "efs_csi_irsa_role" {
       namespace_service_accounts = try(var.irsa.efs_csi.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.efs_csi.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "ext_dns_irsa_role" {
@@ -79,7 +83,8 @@ module "ext_dns_irsa_role" {
       namespace_service_accounts = try(var.irsa.external_dns.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.external_dns.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "autoscaler_irsa_role" {
@@ -95,7 +100,8 @@ module "autoscaler_irsa_role" {
       namespace_service_accounts = try(var.irsa.cluster_autoscaler.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.cluster_autoscaler.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "cert_mgr_irsa_role" {
@@ -111,7 +117,8 @@ module "cert_mgr_irsa_role" {
       namespace_service_accounts = try(var.irsa.cert_manager.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.cert_manager.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "s3_csi_irsa_role" {
@@ -129,7 +136,8 @@ module "s3_csi_irsa_role" {
       namespace_service_accounts = try(var.irsa.s3_csi.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.s3_csi.role_policy_arns, {})
+  tags             = local.all_tags
 }
 
 module "velero_irsa_role" {
@@ -145,5 +153,6 @@ module "velero_irsa_role" {
       namespace_service_accounts = try(var.irsa.velero.namespace_service_accounts, [])
     }
   }
-  tags = local.all_tags
+  role_policy_arns = try(var.irsa.velero.role_policy_arns, {})
+  tags             = local.all_tags
 }
