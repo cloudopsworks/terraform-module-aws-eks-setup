@@ -117,7 +117,7 @@ module "cert_mgr_irsa_role" {
       namespace_service_accounts = try(var.irsa.cert_manager.namespace_service_accounts, [])
     }
   }
-  role_policy_arns = tomap(var.irsa.cert_manager.role_policy_arns)
+  role_policy_arns = try(var.irsa.cert_manager.role_policy_arns, {})
   tags             = local.all_tags
 }
 
