@@ -7,7 +7,7 @@
 locals {
   master_role_new = "eks-${local.system_name}-role"
   master_role_compat ="eks-role-${local.system_name}"
-  master_role_name = try(var.settings.name_compat, false) ? local.master_role_compat : local.master_role_new
+  master_role_name = try(var.settings.role_name_compat, false) ? local.master_role_compat : local.master_role_new
 }
 
 data "aws_caller_identity" "current" {}
