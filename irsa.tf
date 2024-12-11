@@ -43,7 +43,7 @@ module "ebs_csi_irsa_role" {
   create_role           = try(var.irsa.ebs_csi.enabled, false)
   role_name             = "eks-${local.system_name}-ebs-csi-role"
   attach_ebs_csi_policy = true
-  ebs_csi_kms_cmk_ids   = try(var.irsa.ebs_csi.kms_cmk_ids, [])
+  ebs_csi_kms_cmk_ids   = concat(try(var.irsa.ebs_csi.kms_cmk_ids, []), [aws_kms_key.cluster_kms.key_id])
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
