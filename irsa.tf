@@ -4,11 +4,21 @@
 #            Distributed Under Apache v2.0 License
 #
 
+locals {
+  vpc_cni_irsa_role_name = "eks-${local.system_name}-vpc-cni-role"
+  vpc_cni_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
+  ebs_cni_irsa_role_name = "eks-${local.system_name}-ebs-csi-role"
+  ebs_cni_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_cni_irsa_role_name}"
+  efs_cni_irsa_role_name = "eks-${local.system_name}-efs-csi-role"
+  efs_cni_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.efs_cni_irsa_role_name}"
+
+}
+
 module "vpc_cni_irsa_role" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version               = "~> 5.0"
   create_role           = try(var.irsa.vpc_cni.enabled, false)
-  role_name             = "eks-${local.system_name}-vpc-cni-role"
+  role_name             = local.vpc_cni_irsa_role_name
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
   oidc_providers = {
@@ -41,7 +51,7 @@ module "ebs_csi_irsa_role" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version               = "~> 5.0"
   create_role           = try(var.irsa.ebs_csi.enabled, false)
-  role_name             = "eks-${local.system_name}-ebs-csi-role"
+  role_name             = local.ebs_cni_irsa_role_name
   attach_ebs_csi_policy = true
   ebs_csi_kms_cmk_ids   = concat(try(var.irsa.ebs_csi.kms_cmk_ids, []), [aws_kms_key.cluster_kms.key_id])
   oidc_providers = {
@@ -58,7 +68,7 @@ module "efs_csi_irsa_role" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version               = "~> 5.0"
   create_role           = try(var.irsa.efs_csi.enabled, false)
-  role_name             = "eks-${local.system_name}-efs-csi-role"
+  role_name             = local.efs_cni_irsa_role_name
   attach_efs_csi_policy = true
   oidc_providers = {
     main = {

@@ -117,15 +117,16 @@ module "this" {
     }
     vpc-cni = {
       #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent = true
-      service_account_role_arn = try(var.irsa.vpc_cni.enabled, false) ? module.vpc_cni_irsa_role.role_arn : null
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.vpc_cni.enabled, false) ? local.vpc_cni_irsa_role_arn : null
     }
     aws-ebs-csi-driver = {
-      most_recent = true
-      service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? module.ebs_csi_irsa_role.role_arn : null
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? local.ebs_cni_irsa_role_arn : null
     }
     aws-efs-csi-driver = {
-      most_recent = true
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.efs_csi.enabled, false) ? local.efs_cni_irsa_role_arn : null
     }
     snapshot-controller = {
       most_recent = true
