@@ -7,7 +7,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "master" {
-  name               = "eks-${local.system_name}-role"
+  name               = "eks-role-${local.system_name}"
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
