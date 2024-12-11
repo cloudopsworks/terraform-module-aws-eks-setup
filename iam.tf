@@ -29,7 +29,7 @@ POLICY
 }
 
 resource "aws_iam_instance_profile" "master" {
-  name = "eks-${local.system_name}-role"
+  name = "eks-role-${local.system_name}"
   role = aws_iam_role.master.name
   tags = local.all_tags
   lifecycle {
