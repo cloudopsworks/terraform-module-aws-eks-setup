@@ -82,3 +82,9 @@ variable "node_volume_type" {
   type        = string
   default     = "gp2"
 }
+
+variable "role_name_compat" {
+  description = "Role Name Compatibility"
+  type        = bool
+  default     = false
+}
