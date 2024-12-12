@@ -16,6 +16,13 @@ output "cluster_ca_certificate_base64" {
   value = module.this.cluster_certificate_authority_data
 }
 
+output "cluster_arn" {
+  value = module.this.cluster_arn
+}
+
+output "cluster_subnet_ids" {
+  value = var.vpc.subnet_ids
+}
 
 output "kms_key_name" {
   value = aws_kms_alias.cluster_kms.name
