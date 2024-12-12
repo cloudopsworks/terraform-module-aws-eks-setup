@@ -21,7 +21,7 @@ output "cluster_arn" {
 }
 
 output "cluster_subnet_ids" {
-  value = var.vpc.subnet_ids
+  value = var.vpc.private_subnets
 }
 
 output "kms_key_name" {
