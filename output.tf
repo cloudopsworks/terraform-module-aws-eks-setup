@@ -124,3 +124,10 @@ output "velero_irsa_role" {
     name = module.velero_irsa_role.iam_role_name
   }
 }
+
+output "prometheus_irsa_role" {
+  value = {
+    arn  = module.prometheus_irsa_role.iam_role_arn
+    name = module.prometheus_irsa_role.iam_role_name
+  }
+}
