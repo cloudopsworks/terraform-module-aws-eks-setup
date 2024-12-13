@@ -166,3 +166,19 @@ module "velero_irsa_role" {
   role_policy_arns = try(var.irsa.velero.role_policy_arns, {})
   tags             = local.all_tags
 }
+
+module "prometheus_irsa_role" {
+  source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version               = "~> 5.0"
+  create_role           = try(var.irsa.prometheus.enabled, false)
+  role_name             = "eks-${local.system_name}-prometheus-role"
+  attach_amazon_managed_service_prometheus_policy = true
+  oidc_providers = {
+    main = {
+      provider_arn               = module.this.oidc_provider_arn
+      namespace_service_accounts = try(var.irsa.velero.namespace_service_accounts, [])
+    }
+  }
+  role_policy_arns = try(var.irsa.prometheus.role_policy_arns, {})
+  tags             = local.all_tags
+}
