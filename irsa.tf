@@ -176,7 +176,7 @@ module "prometheus_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
-      namespace_service_accounts = try(var.irsa.velero.namespace_service_accounts, [])
+      namespace_service_accounts = try(var.irsa.prometheus.namespace_service_accounts, [])
     }
   }
   role_policy_arns = try(var.irsa.prometheus.role_policy_arns, {})
