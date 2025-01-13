@@ -130,10 +130,12 @@ module "this" {
     }
     snapshot-controller = {
       most_recent = true
+      service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? local.ebs_cni_irsa_role_arn : null
     }
     amazon-cloudwatch-observability = {
       #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent = true
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.cloudwatch.enabled, false) ? local.cloudwatch_irsa_role_arn : null
     }
     eks-pod-identity-agent = {
       #resolve_conflicts_on_create = "OVERWRITE"

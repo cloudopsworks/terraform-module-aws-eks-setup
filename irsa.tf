@@ -5,13 +5,14 @@
 #
 
 locals {
-  vpc_cni_irsa_role_name = "eks-${local.system_name}-vpc-cni-role"
-  vpc_cni_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
-  ebs_cni_irsa_role_name = "eks-${local.system_name}-ebs-csi-role"
-  ebs_cni_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_cni_irsa_role_name}"
-  efs_cni_irsa_role_name = "eks-${local.system_name}-efs-csi-role"
-  efs_cni_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.efs_cni_irsa_role_name}"
-
+  vpc_cni_irsa_role_name    = "eks-${local.system_name}-vpc-cni-role"
+  vpc_cni_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
+  ebs_cni_irsa_role_name    = "eks-${local.system_name}-ebs-csi-role"
+  ebs_cni_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_cni_irsa_role_name}"
+  efs_cni_irsa_role_name    = "eks-${local.system_name}-efs-csi-role"
+  efs_cni_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.efs_cni_irsa_role_name}"
+  cloudwatch_irsa_role_name = "eks-${local.system_name}-cw-observability-role"
+  cloudwatch_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.cloudwatch_irsa_role_name}"
 }
 
 module "vpc_cni_irsa_role" {
@@ -187,7 +188,7 @@ module "cloudwatch_irsa_role" {
   source                                 = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version                                = "~> 5.0"
   create_role                            = try(var.irsa.cloudwatch.enabled, false)
-  role_name                              = "eks-${local.system_name}-cw-observability-role"
+  role_name                              = local.cloudwatch_irsa_role_name
   attach_cloudwatch_observability_policy = true
   oidc_providers = {
     main = {
