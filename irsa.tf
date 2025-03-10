@@ -5,14 +5,16 @@
 #
 
 locals {
-  vpc_cni_irsa_role_name    = "eks-${local.system_name}-vpc-cni-role"
-  vpc_cni_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
-  ebs_cni_irsa_role_name    = "eks-${local.system_name}-ebs-csi-role"
-  ebs_cni_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_cni_irsa_role_name}"
-  efs_cni_irsa_role_name    = "eks-${local.system_name}-efs-csi-role"
-  efs_cni_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.efs_cni_irsa_role_name}"
-  cloudwatch_irsa_role_name = "eks-${local.system_name}-cw-observability-role"
-  cloudwatch_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.cloudwatch_irsa_role_name}"
+  vpc_cni_irsa_role_name       = "eks-${local.system_name}-vpc-cni-role"
+  vpc_cni_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
+  ebs_cni_irsa_role_name       = "eks-${local.system_name}-ebs-csi-role"
+  ebs_cni_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_cni_irsa_role_name}"
+  efs_cni_irsa_role_name       = "eks-${local.system_name}-efs-csi-role"
+  efs_cni_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.efs_cni_irsa_role_name}"
+  cloudwatch_irsa_role_name    = "eks-${local.system_name}-cw-observability-role"
+  cloudwatch_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.cloudwatch_irsa_role_name}"
+  secrets_store_irsa_role_name = "eks-${local.system_name}-secrets-store-role"
+  secrets_store_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.secrets_store_irsa_role_name}"
 }
 
 module "vpc_cni_irsa_role" {
@@ -197,5 +199,21 @@ module "cloudwatch_irsa_role" {
     }
   }
   role_policy_arns = try(var.irsa.cloudwatch.role_policy_arns, {})
+  tags             = local.all_tags
+}
+
+module "secrets_store_irsa_role" {
+  source                      = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version                     = "~> 5.0"
+  create_role                 = try(var.irsa.secrets_store.enabled, false)
+  role_name                   = local.secrets_store_irsa_role_name
+  attach_secrets_store_policy = true
+  oidc_providers = {
+    main = {
+      provider_arn               = module.this.oidc_provider_arn
+      namespace_service_accounts = try(var.irsa.secrets_store.namespace_service_accounts, [])
+    }
+  }
+  role_policy_arns = try(var.irsa.secrets_store.role_policy_arns, {})
   tags             = local.all_tags
 }
