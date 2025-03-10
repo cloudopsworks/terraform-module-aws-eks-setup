@@ -1,4 +1,4 @@
-name: Terraform Transit Gateway Module
+name: Terraform AWS EKS Cluster Setup
 #logo: logo/logo.jpg
 
 license: "APACHE2"
@@ -8,23 +8,84 @@ copyrights:
     url: "https://cloudops.works"
     year: "2024"
 
-github_repo: cloudopsworks/terraform-module-aws-vpc-setup
+github_repo: cloudopsworks/terraform-module-aws-eks-setup
 
 description: |-
-  VPC Module for setting up transit gateway with ResourceAccessMananger support.
+  This Terraform module simplifies the creation and management of an Amazon Elastic Kubernetes
+  Service (EKS) cluster on AWS. It provides a robust configuration that sets up essential
+  components of the EKS cluster, including worker node groups, networking, and IAM roles. 
+  By leveraging this module, teams can quickly provision a production-ready Kubernetes 
+  environment and scale as needed.
 
 # Introduction to the project
-#introduction: |-
-#  This is an introduction.
+introduction: |-
+  ## Module Features
+    1. **EKS Cluster Provisioning**
+    Creates an Amazon EKS cluster, including all necessary IAM roles, policies, and cluster configuration.
+    2. **Node Groups**
+    Manages one or multiple node groups, allowing you to specify instance types, scaling configurations, and machine images (AMIs).
+    3. **Networking**
+    Optionally creates or accepts references to existing networking resources (VPC, subnets, and security groups). It configures the EKS control plane and worker nodes with the required inbound/outbound rules.
+    4. **Logging and Monitoring**
+    Enables various logging and monitoring options (e.g., AWS CloudWatch logging) to capture cluster activities.
+    5. **Auto-Scaling**
+    Uses AWS Auto Scaling to manage the number of worker nodes based on demand, helping to optimize costs and performance.
+    6. **Optimized Defaults**
+    Provides commonly used defaults to simplify the setup process while remaining flexible for customization.
 
 # How to use this project
-#usage: |-
+usage: |-
+  A simple example of how to consume this module in your Terraform configuration might look like this
+  ```hcl
+  module "eks_cluster" {
+    source  = "./path-to-eks-module"
+
+    cluster_name = "my-eks-cluster"
+    version      = "1.27"
+
+    # If using an existing VPC/subnets
+    vpc_id    = var.vpc_id
+    subnet_ids = var.subnet_ids
+
+    # Node group configuration
+    node_group_config = {
+      default = {
+        instance_type = "t3.medium"
+        desired_size  = 3
+        min_size      = 1
+        max_size      = 5
+      }
+    }
+
+    enable_logging = true
+
+    tags = {
+      Environment = "dev"
+      Project     = "eks-automation"
+    }
+  }
+  ```
+  1. **Define Inputs**
+  Replace `var.vpc_id` and `var.subnet_ids` with appropriate variable references or hard-coded strings.
+  2. **Adjust Node Group Config**
+  Modify the `node_group_config` object to meet your compute and scaling needs.
+  3. **Apply**
+  Run `terraform init`, `terraform plan`, and `terraform apply` to create the cluster.
 
 # Example usage
 #examples: |-
 
 # How to get started quickly
-#quickstart: |-
+quickstart: |-
+  ## Prerequisites
+    1. **AWS Credentials**
+    You must have valid AWS credentials configured. Typically, you can do this by setting environment variables (`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`) or by using an AWS profile in `~/.aws/credentials`.
+    2. **Terraform**
+    A properly installed and configured Terraform CLI (preferably version 1.1.0 or higher, though the module may work with earlier versions).
+    3. **VPC and Subnets**
+    An existing VPC and subnets are usually required. This module can optionally create a new VPC and subnets, or you can supply existing ones via input variables.
+    4. **IAM Permissions**
+    The user or role running Terraform must have sufficient permissions to create and manage EKS resources (including IAM roles and policies related to EKS).
 
 include:
   - "docs/targets.md"

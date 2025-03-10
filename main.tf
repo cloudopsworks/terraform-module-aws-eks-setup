@@ -129,7 +129,7 @@ module "this" {
       service_account_role_arn = try(var.irsa.efs_csi.enabled, false) ? local.efs_cni_irsa_role_arn : null
     }
     snapshot-controller = {
-      most_recent = true
+      most_recent              = true
       service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? local.ebs_cni_irsa_role_arn : null
     }
     amazon-cloudwatch-observability = {
@@ -140,6 +140,10 @@ module "this" {
     eks-pod-identity-agent = {
       #resolve_conflicts_on_create = "OVERWRITE"
       most_recent = true
+    }
+    secrets-store-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.secrets_store.enabled, false) ? local.secrets_store_irsa_role_arn : null
     }
   }
 
