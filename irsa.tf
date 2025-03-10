@@ -203,11 +203,12 @@ module "cloudwatch_irsa_role" {
 }
 
 module "secrets_store_irsa_role" {
-  source                      = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version                     = "~> 5.0"
-  create_role                 = try(var.irsa.secrets_store.enabled, false)
-  role_name                   = local.secrets_store_irsa_role_name
-  attach_secrets_store_policy = true
+  source                                             = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version                                            = "~> 5.0"
+  create_role                                        = try(var.irsa.secrets_store.enabled, false)
+  role_name                                          = local.secrets_store_irsa_role_name
+  attach_external_secrets_policy                     = true
+  external_secrets_secrets_manager_create_permission = try(var.irsa.secrets_store.secrets_manager_create_permission, false)
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
