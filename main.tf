@@ -141,10 +141,10 @@ module "this" {
       #resolve_conflicts_on_create = "OVERWRITE"
       most_recent = true
     }
-    secrets-store-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.secrets_store.enabled, false) ? local.secrets_store_irsa_role_arn : null
-    }
+    # secrets-store-csi-driver = {
+    #   most_recent              = true
+    #   service_account_role_arn = try(var.irsa.secrets_store.enabled, false) ? local.secrets_store_irsa_role_arn : null
+    # }
   }
 
   create_kms_key = false
