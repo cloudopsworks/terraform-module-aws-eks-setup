@@ -15,12 +15,14 @@ variable "extend_node_user_data" {
 
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap."
-  type        = list(any)
+  type        = any
+  default     = []
 }
 
 variable "map_roles" {
   description = "Additional IAM ROLES to add to the aws-auth configmap."
-  type        = list(any)
+  type        = any
+  default     = []
 }
 
 variable "node_groups" {
