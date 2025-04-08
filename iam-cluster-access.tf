@@ -24,6 +24,7 @@ resource "aws_eks_access_policy_association" "cluster_access_entry" {
   policy_arn    = try(each.value.policy_arn, "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy")
 
   access_scope {
-    type = "cluster"
+    type       = length(try(each.value.namespaces, [])) > 0 ? "namespace" : "cluster"
+    namespaces = try(each.value.namespaces, null)
   }
 }
