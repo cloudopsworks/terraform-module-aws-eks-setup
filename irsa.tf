@@ -5,6 +5,7 @@
 #
 
 locals {
+  policy_prefix                = "eks-${local.system_name_short}-"
   vpc_cni_irsa_role_name       = "eks-${local.system_name}-vpc-cni-role"
   vpc_cni_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
   ebs_cni_irsa_role_name       = "eks-${local.system_name}-ebs-csi-role"
@@ -22,6 +23,7 @@ module "vpc_cni_irsa_role" {
   version               = "~> 5.0"
   create_role           = try(var.irsa.vpc_cni.enabled, false)
   role_name             = local.vpc_cni_irsa_role_name
+  policy_name_prefix    = local.policy_prefix
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
   oidc_providers = {
@@ -39,6 +41,7 @@ module "lb_irsa_role" {
   version                                = "~> 5.0"
   create_role                            = try(var.irsa.lb.enabled, false)
   role_name                              = "eks-${local.system_name}-lb-role"
+  policy_name_prefix                     = local.policy_prefix
   attach_load_balancer_controller_policy = true
   oidc_providers = {
     main = {
@@ -55,6 +58,7 @@ module "ebs_csi_irsa_role" {
   version               = "~> 5.0"
   create_role           = try(var.irsa.ebs_csi.enabled, false)
   role_name             = local.ebs_cni_irsa_role_name
+  policy_name_prefix    = local.policy_prefix
   attach_ebs_csi_policy = true
   ebs_csi_kms_cmk_ids   = concat(try(var.irsa.ebs_csi.kms_cmk_ids, []), [aws_kms_key.cluster_kms.arn])
   oidc_providers = {
@@ -72,6 +76,7 @@ module "efs_csi_irsa_role" {
   version               = "~> 5.0"
   create_role           = try(var.irsa.efs_csi.enabled, false)
   role_name             = local.efs_cni_irsa_role_name
+  policy_name_prefix    = local.policy_prefix
   attach_efs_csi_policy = true
   oidc_providers = {
     main = {
@@ -88,6 +93,7 @@ module "ext_dns_irsa_role" {
   version                       = "~> 5.0"
   create_role                   = try(var.irsa.external_dns.enabled, false)
   role_name                     = "eks-${local.system_name}-ext-dns-role"
+  policy_name_prefix            = local.policy_prefix
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = try(var.irsa.external_dns.hosted_zone_arns, [])
   oidc_providers = {
@@ -105,6 +111,7 @@ module "autoscaler_irsa_role" {
   version                          = "~> 5.0"
   create_role                      = try(var.irsa.cluster_autoscaler.enabled, false)
   role_name                        = "eks-${local.system_name}-autoscaler-role"
+  policy_name_prefix               = local.policy_prefix
   attach_cluster_autoscaler_policy = true
   cluster_autoscaler_cluster_names = [local.cluster_name]
   oidc_providers = {
@@ -122,6 +129,7 @@ module "cert_mgr_irsa_role" {
   version                       = "~> 5.0"
   create_role                   = try(var.irsa.cert_manager.enabled, false)
   role_name                     = "eks-${local.system_name}-cert-mgr-role"
+  policy_name_prefix            = local.policy_prefix
   attach_cert_manager_policy    = true
   cert_manager_hosted_zone_arns = try(var.irsa.cert_manager.hosted_zone_arns, [])
   oidc_providers = {
@@ -139,6 +147,7 @@ module "s3_csi_irsa_role" {
   version                         = "~> 5.0"
   create_role                     = try(var.irsa.s3_csi.enabled, false)
   role_name                       = "eks-${local.system_name}-s3-csi-role"
+  policy_name_prefix              = local.policy_prefix
   attach_mountpoint_s3_csi_policy = true
   mountpoint_s3_csi_bucket_arns   = try(var.irsa.s3_csi.bucket_arns, [])
   mountpoint_s3_csi_kms_arns      = try(var.irsa.s3_csi.kms_arns, [])
@@ -158,6 +167,7 @@ module "velero_irsa_role" {
   version               = "~> 5.0"
   create_role           = try(var.irsa.velero.enabled, false)
   role_name             = "eks-${local.system_name}-velero-role"
+  policy_name_prefix    = local.policy_prefix
   attach_velero_policy  = true
   velero_s3_bucket_arns = try(var.irsa.velero.bucket_arns, [])
   oidc_providers = {
@@ -175,6 +185,7 @@ module "prometheus_irsa_role" {
   version                                         = "~> 5.0"
   create_role                                     = try(var.irsa.prometheus.enabled, false)
   role_name                                       = "eks-${local.system_name}-prometheus-role"
+  policy_name_prefix                              = local.policy_prefix
   attach_amazon_managed_service_prometheus_policy = true
   oidc_providers = {
     main = {
@@ -191,6 +202,7 @@ module "cloudwatch_irsa_role" {
   version                                = "~> 5.0"
   create_role                            = try(var.irsa.cloudwatch.enabled, false)
   role_name                              = local.cloudwatch_irsa_role_name
+  policy_name_prefix                     = local.policy_prefix
   attach_cloudwatch_observability_policy = true
   oidc_providers = {
     main = {
@@ -207,6 +219,7 @@ module "secrets_store_irsa_role" {
   version                                            = "~> 5.0"
   create_role                                        = try(var.irsa.secrets_store.enabled, false)
   role_name                                          = local.secrets_store_irsa_role_name
+  policy_name_prefix                                 = local.policy_prefix
   attach_external_secrets_policy                     = true
   external_secrets_secrets_manager_create_permission = try(var.irsa.secrets_store.secrets_manager_create_permission, false)
   oidc_providers = {
