@@ -241,6 +241,7 @@ module "adot_irsa_role" {
   role_name                                          = local.adot_irsa_role_name
   policy_name_prefix                                 = local.policy_prefix
   attach_external_secrets_policy                     = true
+  attach_cloudwatch_observability_policy             = true
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
