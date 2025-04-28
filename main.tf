@@ -107,45 +107,7 @@ module "this" {
   cluster_endpoint_public_access       = var.public_api_server
   cluster_endpoint_public_access_cidrs = var.access_cidrs
 
-  cluster_addons = {
-    coredns = {
-      resolve_conflicts_on_create = "OVERWRITE"
-      most_recent                 = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    vpc-cni = {
-      #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.vpc_cni.enabled, false) ? local.vpc_cni_irsa_role_arn : null
-    }
-    aws-ebs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? local.ebs_cni_irsa_role_arn : null
-    }
-    aws-efs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.efs_csi.enabled, false) ? local.efs_cni_irsa_role_arn : null
-    }
-    snapshot-controller = {
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? local.ebs_cni_irsa_role_arn : null
-    }
-    amazon-cloudwatch-observability = {
-      #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.cloudwatch.enabled, false) ? local.cloudwatch_irsa_role_arn : null
-    }
-    eks-pod-identity-agent = {
-      #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent = true
-    }
-    # secrets-store-csi-driver = {
-    #   most_recent              = true
-    #   service_account_role_arn = try(var.irsa.secrets_store.enabled, false) ? local.secrets_store_irsa_role_arn : null
-    # }
-  }
+  cluster_addons = local.cluster_addons
 
   create_kms_key = false
   cluster_encryption_config = {
