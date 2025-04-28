@@ -90,23 +90,6 @@ locals {
   }
 
   map_roles = var.map_roles
-}
-
-
-module "this" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.00"
-
-  vpc_id              = var.vpc.vpc_id
-  cluster_name        = local.cluster_name
-  subnet_ids          = var.vpc.private_subnets
-  cluster_version     = var.cluster_version
-  authentication_mode = "API_AND_CONFIG_MAP"
-
-  cluster_endpoint_private_access      = var.private_api_server
-  cluster_endpoint_public_access       = var.public_api_server
-  cluster_endpoint_public_access_cidrs = var.access_cidrs
-
   cluster_addons = {
     coredns = {
       resolve_conflicts_on_create = "OVERWRITE"
@@ -141,11 +124,30 @@ module "this" {
       #resolve_conflicts_on_create = "OVERWRITE"
       most_recent = true
     }
-    # secrets-store-csi-driver = {
-    #   most_recent              = true
-    #   service_account_role_arn = try(var.irsa.secrets_store.enabled, false) ? local.secrets_store_irsa_role_arn : null
-    # }
+    adot = {
+      #resolve_conflicts_on_create = "OVERWRITE"
+      most_recent = true
+      service_account_role_arn = try(var.irsa.adot.enabled, false) ? local.adot_irsa_role_arn : null
+    }
   }
+}
+
+
+module "this" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.00"
+
+  vpc_id              = var.vpc.vpc_id
+  cluster_name        = local.cluster_name
+  subnet_ids          = var.vpc.private_subnets
+  cluster_version     = var.cluster_version
+  authentication_mode = "API_AND_CONFIG_MAP"
+
+  cluster_endpoint_private_access      = var.private_api_server
+  cluster_endpoint_public_access       = var.public_api_server
+  cluster_endpoint_public_access_cidrs = var.access_cidrs
+
+  cluster_addons = local.cluster_addons
 
   create_kms_key = false
   cluster_encryption_config = {
