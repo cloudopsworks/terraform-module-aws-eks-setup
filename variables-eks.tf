@@ -90,3 +90,9 @@ variable "role_name_compat" {
   type        = bool
   default     = false
 }
+
+variable "addons" {
+  description = "EKS Addons"
+  type        = any
+  default     = {}
+}

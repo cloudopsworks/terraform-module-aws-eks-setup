@@ -90,46 +90,6 @@ locals {
   }
 
   map_roles = var.map_roles
-  cluster_addons = {
-    coredns = {
-      resolve_conflicts_on_create = "OVERWRITE"
-      most_recent                 = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    vpc-cni = {
-      #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.vpc_cni.enabled, false) ? local.vpc_cni_irsa_role_arn : null
-    }
-    aws-ebs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? local.ebs_cni_irsa_role_arn : null
-    }
-    aws-efs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.efs_csi.enabled, false) ? local.efs_cni_irsa_role_arn : null
-    }
-    snapshot-controller = {
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.ebs_csi.enabled, false) ? local.ebs_cni_irsa_role_arn : null
-    }
-    amazon-cloudwatch-observability = {
-      #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent              = true
-      service_account_role_arn = try(var.irsa.cloudwatch.enabled, false) ? local.cloudwatch_irsa_role_arn : null
-    }
-    eks-pod-identity-agent = {
-      #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent = true
-    }
-    adot = {
-      #resolve_conflicts_on_create = "OVERWRITE"
-      most_recent = true
-      service_account_role_arn = try(var.irsa.adot.enabled, false) ? local.adot_irsa_role_arn : null
-    }
-  }
 }
 
 

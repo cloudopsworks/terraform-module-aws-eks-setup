@@ -235,13 +235,13 @@ module "secrets_store_irsa_role" {
 }
 
 module "adot_irsa_role" {
-  source                                             = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version                                            = "~> 5.0"
-  create_role                                        = try(var.irsa.adot.enabled, false)
-  role_name                                          = local.adot_irsa_role_name
-  policy_name_prefix                                 = local.policy_prefix
-  attach_external_secrets_policy                     = true
-  attach_cloudwatch_observability_policy             = true
+  source                                 = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version                                = "~> 5.0"
+  create_role                            = try(var.irsa.adot.enabled, false)
+  role_name                              = local.adot_irsa_role_name
+  policy_name_prefix                     = local.policy_prefix
+  attach_external_secrets_policy         = true
+  attach_cloudwatch_observability_policy = true
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
