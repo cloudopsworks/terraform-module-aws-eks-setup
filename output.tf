@@ -131,3 +131,24 @@ output "prometheus_irsa_role" {
     name = module.prometheus_irsa_role.iam_role_name
   }
 }
+
+output "adot_irsa_role" {
+  value = {
+    arn  = module.adot_irsa_role.iam_role_arn
+    name = module.adot_irsa_role.iam_role_name
+  }
+}
+
+output "secrets_store_irsa_role" {
+  value = {
+    arn  = module.secrets_store_irsa_role.iam_role_arn
+    name = module.secrets_store_irsa_role.iam_role_name
+  }
+}
+
+output "cloudwatch_irsa_role" {
+  value = {
+    arn  = module.cloudwatch_irsa_role.iam_role_arn
+    name = module.cloudwatch_irsa_role.iam_role_name
+  }
+}
