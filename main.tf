@@ -88,8 +88,6 @@ locals {
       "k8s.io/cluster-autoscaler/${local.cluster_name}" = "owned"
     }
   }
-
-  map_roles = var.map_roles
 }
 
 
@@ -131,6 +129,7 @@ module "this" {
   #manage_aws_auth_configmap = true
   #aws_auth_roles            = local.map_roles
   #aws_auth_users            = var.map_users
+  access_entries = local.access_entries
 
   eks_managed_node_group_defaults  = local.node_group_defaults
   eks_managed_node_groups          = var.node_groups

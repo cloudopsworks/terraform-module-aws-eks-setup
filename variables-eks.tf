@@ -13,14 +13,15 @@ variable "extend_node_user_data" {
   default = ""
 }
 
+# DEPRECATED
 variable "map_users" {
-  description = "Additional IAM users to add to the aws-auth configmap."
+  description = "Additional IAM users to add IAM access Entries, aws-auth is deprecated."
   type        = any
   default     = []
 }
 
-variable "map_roles" {
-  description = "Additional IAM ROLES to add to the aws-auth configmap."
+variable "access_entries" {
+  description = "Additional IAM users to add IAM access Entries, aws-auth is deprecated."
   type        = any
   default     = []
 }
