@@ -4,6 +4,16 @@
 #            Distributed Under Apache v2.0 License
 #
 
+moved {
+  from = aws_eks_access_entry.cluster_access_entry
+  to   = module.this.aws_eks_access_entry.this
+}
+
+moved {
+  from = aws_eks_access_policy_association.cluster_access_entry
+  to   = module.this.aws_eks_access_policy_association.this
+}
+
 # resource "aws_eks_access_entry" "cluster_access_entry" {
 #   for_each = { for item in var.map_users : item.username => item }
 #
