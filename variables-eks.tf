@@ -23,7 +23,7 @@ variable "map_users" {
 variable "access_entries" {
   description = "Additional IAM users to add IAM access Entries, aws-auth is deprecated."
   type        = any
-  default     = []
+  default     = {}
 }
 
 variable "node_groups" {
