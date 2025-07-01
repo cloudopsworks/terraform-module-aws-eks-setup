@@ -97,3 +97,9 @@ variable "addons" {
   type        = any
   default     = {}
 }
+
+variable "log_group_retention" {
+  description = "Retention period for CloudWatch log groups in days"
+  type        = number
+  default     = 7
+}

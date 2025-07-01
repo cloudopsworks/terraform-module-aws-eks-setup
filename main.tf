@@ -120,7 +120,7 @@ module "this" {
   enable_irsa                   = true
 
   cluster_enabled_log_types              = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  cloudwatch_log_group_retention_in_days = 30
+  cloudwatch_log_group_retention_in_days = var.log_group_retention
 
   create_node_security_group = false
   node_security_group_id     = aws_security_group.worker.id
