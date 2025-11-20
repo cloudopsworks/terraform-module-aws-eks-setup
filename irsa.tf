@@ -18,6 +18,8 @@ locals {
   secrets_store_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.secrets_store_irsa_role_name}"
   adot_irsa_role_name          = "eks-${local.system_name}-adot-role"
   adot_irsa_role_arn           = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.adot_irsa_role_name}"
+  keda_irsa_role_name          = "eks-${local.system_name}-keda-role"
+  keda_irsa_role_arn           = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.keda_irsa_role_name}"
 }
 
 module "vpc_cni_irsa_role" {
@@ -249,5 +251,23 @@ module "adot_irsa_role" {
     }
   }
   role_policy_arns = try(var.irsa.adot.role_policy_arns, {})
+  tags             = local.all_tags
+}
+
+module "keda_irsa_role" {
+  source                                 = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version                                = "~> 5.0"
+  create_role                            = try(var.irsa.keda.enabled, false)
+  role_name                              = local.keda_irsa_role_name
+  policy_name_prefix                     = local.policy_prefix
+  attach_external_secrets_policy         = true
+  attach_cloudwatch_observability_policy = true
+  oidc_providers = {
+    main = {
+      provider_arn               = module.this.oidc_provider_arn
+      namespace_service_accounts = try(var.irsa.keda.namespace_service_accounts, [])
+    }
+  }
+  role_policy_arns = try(var.irsa.keda.role_policy_arns, {})
   tags             = local.all_tags
 }
