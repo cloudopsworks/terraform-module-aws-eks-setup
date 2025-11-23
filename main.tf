@@ -102,7 +102,7 @@ module "this" {
   kubernetes_version  = var.cluster_version
   authentication_mode = "API_AND_CONFIG_MAP"
 
-  enable_cluster_creator_admin_permissions = true
+  enable_cluster_creator_admin_permissions = var.creator_admin_permissions
   # create_auto_mode_iam_resources = true
   # compute_config = {
   #   enabled = true
