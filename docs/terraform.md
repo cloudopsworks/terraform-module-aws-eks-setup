@@ -14,30 +14,30 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.20 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.22.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.6.1 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_adot_irsa_role"></a> [adot\_irsa\_role](#module\_adot\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_autoscaler_irsa_role"></a> [autoscaler\_irsa\_role](#module\_autoscaler\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_cert_mgr_irsa_role"></a> [cert\_mgr\_irsa\_role](#module\_cert\_mgr\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_cloudwatch_irsa_role"></a> [cloudwatch\_irsa\_role](#module\_cloudwatch\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_ebs_csi_irsa_role"></a> [ebs\_csi\_irsa\_role](#module\_ebs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_efs_csi_irsa_role"></a> [efs\_csi\_irsa\_role](#module\_efs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_ext_dns_irsa_role"></a> [ext\_dns\_irsa\_role](#module\_ext\_dns\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_keda_irsa_role"></a> [keda\_irsa\_role](#module\_keda\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_lb_irsa_role"></a> [lb\_irsa\_role](#module\_lb\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_prometheus_irsa_role"></a> [prometheus\_irsa\_role](#module\_prometheus\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_s3_csi_irsa_role"></a> [s3\_csi\_irsa\_role](#module\_s3\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_secrets_store_irsa_role"></a> [secrets\_store\_irsa\_role](#module\_secrets\_store\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
+| <a name="module_adot_irsa_role"></a> [adot\_irsa\_role](#module\_adot\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_autoscaler_irsa_role"></a> [autoscaler\_irsa\_role](#module\_autoscaler\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_cert_mgr_irsa_role"></a> [cert\_mgr\_irsa\_role](#module\_cert\_mgr\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_cloudwatch_irsa_role"></a> [cloudwatch\_irsa\_role](#module\_cloudwatch\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_ebs_csi_irsa_role"></a> [ebs\_csi\_irsa\_role](#module\_ebs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_efs_csi_irsa_role"></a> [efs\_csi\_irsa\_role](#module\_efs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_ext_dns_irsa_role"></a> [ext\_dns\_irsa\_role](#module\_ext\_dns\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_keda_irsa_role"></a> [keda\_irsa\_role](#module\_keda\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_lb_irsa_role"></a> [lb\_irsa\_role](#module\_lb\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_prometheus_irsa_role"></a> [prometheus\_irsa\_role](#module\_prometheus\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_s3_csi_irsa_role"></a> [s3\_csi\_irsa\_role](#module\_s3\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_secrets_store_irsa_role"></a> [secrets\_store\_irsa\_role](#module\_secrets\_store\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_tags"></a> [tags](#module\_tags) | cloudopsworks/tags/local | 1.0.9 |
 | <a name="module_this"></a> [this](#module\_this) | terraform-aws-modules/eks/aws | ~> 21.0 |
-| <a name="module_velero_irsa_role"></a> [velero\_irsa\_role](#module\_velero\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
-| <a name="module_vpc_cni_irsa_role"></a> [vpc\_cni\_irsa\_role](#module\_vpc\_cni\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 5.0 |
+| <a name="module_velero_irsa_role"></a> [velero\_irsa\_role](#module\_velero\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_vpc_cni_irsa_role"></a> [vpc\_cni\_irsa\_role](#module\_vpc\_cni\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 
 ## Resources
 
@@ -99,6 +99,7 @@
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Additional IAM users to add IAM access Entries, aws-auth is deprecated. | `any` | `{}` | no |
 | <a name="input_addons"></a> [addons](#input\_addons) | EKS Addons | `any` | `{}` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes Version for EKS setup/upgrade | `string` | `"1.20"` | no |
+| <a name="input_creator_admin_permissions"></a> [creator\_admin\_permissions](#input\_creator\_admin\_permissions) | Enable admin permissions for cluster creator | `bool` | `true` | no |
 | <a name="input_extend_node_user_data"></a> [extend\_node\_user\_data](#input\_extend\_node\_user\_data) | n/a | `string` | `""` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
 | <a name="input_irsa"></a> [irsa](#input\_irsa) | IRSA configuration settings | `any` | `{}` | no |
@@ -137,6 +138,7 @@
 | <a name="output_efs_csi_irsa_role"></a> [efs\_csi\_irsa\_role](#output\_efs\_csi\_irsa\_role) | n/a |
 | <a name="output_eks_worker_key"></a> [eks\_worker\_key](#output\_eks\_worker\_key) | n/a |
 | <a name="output_ext_dns_irsa_role"></a> [ext\_dns\_irsa\_role](#output\_ext\_dns\_irsa\_role) | n/a |
+| <a name="output_keda_irsa_role"></a> [keda\_irsa\_role](#output\_keda\_irsa\_role) | n/a |
 | <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | n/a |
 | <a name="output_kms_key_id"></a> [kms\_key\_id](#output\_kms\_key\_id) | n/a |
 | <a name="output_kms_key_name"></a> [kms\_key\_name](#output\_kms\_key\_name) | n/a |
