@@ -50,7 +50,7 @@ module "lb_irsa_role" {
   create                                 = try(var.irsa.lb.enabled, false)
   name                                   = "eks-${local.system_name}-lb-role"
   policy_name                            = local.policy_prefix
-  use_name_prefix                        = false
+  use_name_prefix                        = true
   attach_load_balancer_controller_policy = true
   oidc_providers = {
     main = {
@@ -68,7 +68,7 @@ module "ebs_csi_irsa_role" {
   create                = try(var.irsa.ebs_csi.enabled, false)
   name                  = local.ebs_cni_irsa_role_name
   policy_name           = local.policy_prefix
-  use_name_prefix       = false
+  use_name_prefix       = true
   attach_ebs_csi_policy = true
   ebs_csi_kms_cmk_arns  = concat(try(var.irsa.ebs_csi.kms_cmk_ids, []), [aws_kms_key.cluster_kms.arn])
   oidc_providers = {
@@ -87,7 +87,7 @@ module "efs_csi_irsa_role" {
   create                = try(var.irsa.efs_csi.enabled, false)
   name                  = local.efs_cni_irsa_role_name
   policy_name           = local.policy_prefix
-  use_name_prefix       = false
+  use_name_prefix       = true
   attach_efs_csi_policy = true
   oidc_providers = {
     main = {
@@ -105,7 +105,7 @@ module "ext_dns_irsa_role" {
   create                        = try(var.irsa.external_dns.enabled, false)
   name                          = "eks-${local.system_name}-ext-dns-role"
   policy_name                   = local.policy_prefix
-  use_name_prefix               = false
+  use_name_prefix               = true
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = try(var.irsa.external_dns.hosted_zone_arns, [])
   oidc_providers = {
@@ -124,7 +124,7 @@ module "autoscaler_irsa_role" {
   create                           = try(var.irsa.cluster_autoscaler.enabled, false)
   name                             = "eks-${local.system_name}-autoscaler-role"
   policy_name                      = local.policy_prefix
-  use_name_prefix                  = false
+  use_name_prefix                  = true
   attach_cluster_autoscaler_policy = true
   cluster_autoscaler_cluster_names = [local.cluster_name]
   oidc_providers = {
@@ -143,7 +143,7 @@ module "cert_mgr_irsa_role" {
   create                        = try(var.irsa.cert_manager.enabled, false)
   name                          = "eks-${local.system_name}-cert-mgr-role"
   policy_name                   = local.policy_prefix
-  use_name_prefix               = false
+  use_name_prefix               = true
   attach_cert_manager_policy    = true
   cert_manager_hosted_zone_arns = try(var.irsa.cert_manager.hosted_zone_arns, [])
   oidc_providers = {
@@ -162,7 +162,7 @@ module "s3_csi_irsa_role" {
   create                          = try(var.irsa.s3_csi.enabled, false)
   name                            = "eks-${local.system_name}-s3-csi-role"
   policy_name                     = local.policy_prefix
-  use_name_prefix                 = false
+  use_name_prefix                 = true
   attach_mountpoint_s3_csi_policy = true
   mountpoint_s3_csi_bucket_arns   = try(var.irsa.s3_csi.bucket_arns, [])
   mountpoint_s3_csi_kms_arns      = try(var.irsa.s3_csi.kms_arns, [])
@@ -183,7 +183,7 @@ module "velero_irsa_role" {
   create                = try(var.irsa.velero.enabled, false)
   name                  = "eks-${local.system_name}-velero-role"
   policy_name           = local.policy_prefix
-  use_name_prefix       = false
+  use_name_prefix       = true
   attach_velero_policy  = true
   velero_s3_bucket_arns = try(var.irsa.velero.bucket_arns, [])
   oidc_providers = {
@@ -202,7 +202,7 @@ module "prometheus_irsa_role" {
   create                                          = try(var.irsa.prometheus.enabled, false)
   name                                            = "eks-${local.system_name}-prometheus-role"
   policy_name                                     = local.policy_prefix
-  use_name_prefix                                 = false
+  use_name_prefix                                 = true
   attach_amazon_managed_service_prometheus_policy = true
   oidc_providers = {
     main = {
@@ -220,7 +220,7 @@ module "cloudwatch_irsa_role" {
   create                                 = try(var.irsa.cloudwatch.enabled, false)
   name                                   = local.cloudwatch_irsa_role_name
   policy_name                            = local.policy_prefix
-  use_name_prefix                        = false
+  use_name_prefix                        = true
   attach_cloudwatch_observability_policy = true
   oidc_providers = {
     main = {
@@ -238,7 +238,7 @@ module "secrets_store_irsa_role" {
   create                                             = try(var.irsa.secrets_store.enabled, false)
   name                                               = local.secrets_store_irsa_role_name
   policy_name                                        = local.policy_prefix
-  use_name_prefix                                    = false
+  use_name_prefix                                    = true
   attach_external_secrets_policy                     = true
   external_secrets_secrets_manager_create_permission = try(var.irsa.secrets_store.secrets_manager_create_permission, false)
   oidc_providers = {
@@ -257,7 +257,7 @@ module "adot_irsa_role" {
   create                                 = try(var.irsa.adot.enabled, false)
   name                                   = local.adot_irsa_role_name
   policy_name                            = local.policy_prefix
-  use_name_prefix                        = false
+  use_name_prefix                        = true
   attach_external_secrets_policy         = true
   attach_cloudwatch_observability_policy = true
   oidc_providers = {
@@ -276,7 +276,7 @@ module "keda_irsa_role" {
   create                                 = try(var.irsa.keda.enabled, false)
   name                                   = local.keda_irsa_role_name
   policy_name                            = local.policy_prefix
-  use_name_prefix                        = false
+  use_name_prefix                        = true
   attach_external_secrets_policy         = true
   attach_cloudwatch_observability_policy = true
   oidc_providers = {
