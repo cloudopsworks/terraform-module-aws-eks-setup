@@ -169,7 +169,7 @@ data "aws_iam_policy_document" "worker_ecr_access" {
       "ecr:PutImage"
     ]
     resources = [
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*"
+      "arn:aws:ecr:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:repository/*"
     ]
   }
 }
