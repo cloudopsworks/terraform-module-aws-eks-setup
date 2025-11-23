@@ -137,8 +137,8 @@ module "this" {
   #aws_auth_users            = var.map_users
   access_entries = local.access_entries
 
-  eks_managed_node_groups  = merge(local.node_group_defaults, var.node_groups)
-  self_managed_node_groups = merge(local.self_node_group_defaults, var.self_node_groups)
+  eks_managed_node_groups  = { for k, ng in var.node_groups : k => merge(local.node_group_defaults, ng) }
+  self_managed_node_groups = { for k, ng in var.self_node_groups : k => merge(local.self_node_group_defaults, ng) }
 
   tags = local.all_tags
   cluster_tags = merge(
