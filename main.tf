@@ -60,7 +60,6 @@ locals {
     instance_types = ["m6i.xlarge", "m5.xlarge", "m5a.xlarge", "m6a.xlarge"]
     subnet_ids     = var.vpc.private_subnets
 
-
     iam_instance_profile_name = aws_iam_instance_profile.worker.name
     key_name                  = aws_key_pair.eks_worker_key.key_name
     # root_kms_key_id           = aws_kms_key.this-prod-kms.arn
@@ -93,36 +92,41 @@ locals {
   }
 }
 
-
 module "this" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.00"
+  version = "~> 21.0"
 
   vpc_id              = var.vpc.vpc_id
-  cluster_name        = local.cluster_name
+  name                = local.cluster_name
   subnet_ids          = var.vpc.private_subnets
-  cluster_version     = var.cluster_version
+  kubernetes_version  = var.cluster_version
   authentication_mode = "API_AND_CONFIG_MAP"
 
-  cluster_endpoint_private_access      = var.private_api_server
-  cluster_endpoint_public_access       = var.public_api_server
-  cluster_endpoint_public_access_cidrs = var.access_cidrs
+  enable_cluster_creator_admin_permissions = var.creator_admin_permissions
+  # create_auto_mode_iam_resources = true
+  # compute_config = {
+  #   enabled = true
+  # }
 
-  cluster_addons = local.cluster_addons
+  endpoint_private_access      = var.private_api_server
+  endpoint_public_access       = var.public_api_server
+  endpoint_public_access_cidrs = var.access_cidrs
+
+  addons = local.cluster_addons
 
   create_kms_key = false
-  cluster_encryption_config = {
+  encryption_config = {
     provider_key_arn = aws_kms_key.cluster_kms.arn
     resources        = ["secrets"]
   }
 
-  create_cluster_security_group = false
-  cluster_security_group_id     = aws_security_group.master.id
-  create_iam_role               = false
-  iam_role_arn                  = aws_iam_role.master.arn
-  enable_irsa                   = true
+  create_security_group = false
+  security_group_id     = aws_security_group.master.id
+  create_iam_role       = false
+  iam_role_arn          = aws_iam_role.master.arn
+  enable_irsa           = true
 
-  cluster_enabled_log_types              = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  enabled_log_types                      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   cloudwatch_log_group_retention_in_days = var.log_group_retention
 
   create_node_security_group = false
@@ -134,10 +138,8 @@ module "this" {
   #aws_auth_users            = var.map_users
   access_entries = local.access_entries
 
-  eks_managed_node_group_defaults  = local.node_group_defaults
-  eks_managed_node_groups          = var.node_groups
-  self_managed_node_group_defaults = local.self_node_group_defaults
-  self_managed_node_groups         = var.self_node_groups
+  eks_managed_node_groups  = { for k, ng in var.node_groups : k => merge(local.node_group_defaults, ng) }
+  self_managed_node_groups = { for k, ng in var.self_node_groups : k => merge(local.self_node_group_defaults, ng) }
 
   tags = local.all_tags
   cluster_tags = merge(

@@ -67,91 +67,98 @@ output "cluster_sg_worker" {
 
 output "lb_irsa_role" {
   value = {
-    arn  = module.lb_irsa_role.iam_role_arn
-    name = module.lb_irsa_role.iam_role_name
+    arn  = module.lb_irsa_role.arn
+    name = module.lb_irsa_role.name
   }
 }
 
 output "vpc_cni_irsa_role" {
   value = {
-    arn  = module.vpc_cni_irsa_role.iam_role_arn
-    name = module.vpc_cni_irsa_role.iam_role_name
+    arn  = module.vpc_cni_irsa_role.arn
+    name = module.vpc_cni_irsa_role.name
   }
 }
 
 output "ebs_csi_irsa_role" {
   value = {
-    arn  = module.ebs_csi_irsa_role.iam_role_arn
-    name = module.ebs_csi_irsa_role.iam_role_name
+    arn  = module.ebs_csi_irsa_role.arn
+    name = module.ebs_csi_irsa_role.name
   }
 }
 
 output "efs_csi_irsa_role" {
   value = {
-    arn  = module.efs_csi_irsa_role.iam_role_arn
-    name = module.efs_csi_irsa_role.iam_role_name
+    arn  = module.efs_csi_irsa_role.arn
+    name = module.efs_csi_irsa_role.name
   }
 }
 
 output "ext_dns_irsa_role" {
   value = {
-    arn  = module.ext_dns_irsa_role.iam_role_arn
-    name = module.ext_dns_irsa_role.iam_role_name
+    arn  = module.ext_dns_irsa_role.arn
+    name = module.ext_dns_irsa_role.name
   }
 }
 
 output "autoscaler_irsa_role" {
   value = {
-    arn  = module.autoscaler_irsa_role.iam_role_arn
-    name = module.autoscaler_irsa_role.iam_role_name
+    arn  = module.autoscaler_irsa_role.arn
+    name = module.autoscaler_irsa_role.name
   }
 }
 
 output "cert_mgr_irsa_role" {
   value = {
-    arn  = module.cert_mgr_irsa_role.iam_role_arn
-    name = module.cert_mgr_irsa_role.iam_role_name
+    arn  = module.cert_mgr_irsa_role.arn
+    name = module.cert_mgr_irsa_role.name
   }
 }
 
 output "s3_csi_irsa_role" {
   value = {
-    arn  = module.s3_csi_irsa_role.iam_role_arn
-    name = module.s3_csi_irsa_role.iam_role_name
+    arn  = module.s3_csi_irsa_role.arn
+    name = module.s3_csi_irsa_role.name
   }
 }
 
 output "velero_irsa_role" {
   value = {
-    arn  = module.velero_irsa_role.iam_role_arn
-    name = module.velero_irsa_role.iam_role_name
+    arn  = module.velero_irsa_role.arn
+    name = module.velero_irsa_role.name
   }
 }
 
 output "prometheus_irsa_role" {
   value = {
-    arn  = module.prometheus_irsa_role.iam_role_arn
-    name = module.prometheus_irsa_role.iam_role_name
+    arn  = module.prometheus_irsa_role.arn
+    name = module.prometheus_irsa_role.name
   }
 }
 
 output "adot_irsa_role" {
   value = {
-    arn  = module.adot_irsa_role.iam_role_arn
-    name = module.adot_irsa_role.iam_role_name
+    arn  = module.adot_irsa_role.arn
+    name = module.adot_irsa_role.name
   }
 }
 
 output "secrets_store_irsa_role" {
   value = {
-    arn  = module.secrets_store_irsa_role.iam_role_arn
-    name = module.secrets_store_irsa_role.iam_role_name
+    arn  = module.secrets_store_irsa_role.arn
+    name = module.secrets_store_irsa_role.name
   }
 }
 
 output "cloudwatch_irsa_role" {
   value = {
-    arn  = module.cloudwatch_irsa_role.iam_role_arn
-    name = module.cloudwatch_irsa_role.iam_role_name
+    arn  = module.cloudwatch_irsa_role.arn
+    name = module.cloudwatch_irsa_role.name
+  }
+}
+
+output "keda_irsa_role" {
+  value = {
+    arn  = module.keda_irsa_role.arn
+    name = module.keda_irsa_role.name
   }
 }

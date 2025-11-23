@@ -106,3 +106,10 @@ variable "log_group_retention" {
   type        = number
   default     = 7
 }
+
+variable "creator_admin_permissions" {
+  description = "Enable admin permissions for cluster creator"
+  type        = bool
+  default     = true
+  nullable    = false
+}
