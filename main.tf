@@ -103,9 +103,10 @@ module "this" {
   authentication_mode = "API_AND_CONFIG_MAP"
 
   enable_cluster_creator_admin_permissions = true
-  compute_config = {
-    enabled = true
-  }
+  # create_auto_mode_iam_resources = true
+  # compute_config = {
+  #   enabled = true
+  # }
 
   endpoint_private_access      = var.private_api_server
   endpoint_public_access       = var.public_api_server
