@@ -155,3 +155,10 @@ output "cloudwatch_irsa_role" {
     name = module.cloudwatch_irsa_role.name
   }
 }
+
+output "keda_irsa_role" {
+  value = {
+    arn  = module.keda_irsa_role.arn
+    name = module.keda_irsa_role.name
+  }
+}
