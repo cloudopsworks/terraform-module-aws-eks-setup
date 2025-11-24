@@ -241,6 +241,9 @@ module "secrets_store_irsa_role" {
   use_name_prefix                                    = false
   attach_external_secrets_policy                     = true
   external_secrets_secrets_manager_create_permission = try(var.irsa.secrets_store.secrets_manager_create_permission, false)
+  external_secrets_secrets_manager_arns              = try(var.irsa.secrets_store.secrets_manager_arns, [])
+  external_secrets_ssm_parameter_arns                = try(var.irsa.secrets_store.ssm_parameter_arns, [])
+  external_secrets_kms_key_arns                      = try(var.irsa.secrets_store.kms_key_arns, [])
   oidc_providers = {
     main = {
       provider_arn               = module.this.oidc_provider_arn
