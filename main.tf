@@ -39,6 +39,12 @@ locals {
       }
     }
 
+    metadata_options = {
+      http_put_response_hop_limit = 2
+      http_tokens                 = "required"
+      http_endpoint               = "enabled"
+    }
+
     create_iam_role = false
     iam_role_arn    = aws_iam_role.worker.arn
 
@@ -80,6 +86,12 @@ locals {
           delete_on_termination = true
         }
       }
+    }
+
+    metadata_options = {
+      http_put_response_hop_limit = 2
+      http_tokens                 = "required"
+      http_endpoint               = "enabled"
     }
 
     create_iam_role = false
