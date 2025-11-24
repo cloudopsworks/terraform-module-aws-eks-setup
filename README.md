@@ -73,55 +73,322 @@ We have [*lots of terraform modules*][terraform_modules] that are Open Source an
 Instead pin to the release tag (e.g. `?ref=vX.Y.Z`) of one of our [latest releases](https://github.com/cloudopsworks/terraform-module-aws-eks-setup/releases).
 
 
-A simple example of how to consume this module in your Terraform configuration might look like this
+## Module Options (Inputs)
+
+Below is a comprehensive list of all input variables for this module:
+
+### General Configuration
+- `is_hub`: Establish this is a HUB or spoke configuration (type: bool, default: false)
+- `spoke_def`: Spoke definition (for hub-spoke architecture) (type: string, default: "001")
+- `org`: Organization configuration (type: object({organization_name = string, organization_unit = string, environment_type = string, environment_name = string}), required)
+- `extra_tags`: Extra tags to apply to resources (type: map(string), default: {})
+
+### VPC and Networking
+- `vpc`: VPC configuration entry (requires vpc_id, private_subnets, etc.) (type: any, required)
+
+### Cluster Configuration
+- `cluster_version`: Kubernetes Version for EKS setup/upgrade (type: string, default: "1.20")
+- `access_cidrs`: CIDR list to allow access to EKS cluster (type: list(string), default: [])
+- `public_api_server`: Public API server access (type: bool, default: false)
+- `private_api_server`: Private API server access (type: bool, default: true)
+
+### Node Groups
+- `node_groups`: Managed worker group configurations (maps to AWS EKS managed node groups) (type: any, default: {})
+  - **Supported parameters**: `ami_type`, `capacity_type` (ON_DEMAND/SPOT), `disk_size`, `instance_types`, `desired_size`, `min_size`, `max_size`, `subnet_ids`, `additional_security_group_ids`, `iam_role_additional_policies`, `labels`, `taints`, `update_config`, `ami_id`, `user_data`, `enable_bootstrap_user_data`, `platform`, `use_name_prefix`, `enable_detailed_monitoring`, `availability_zones`
+- `self_node_groups`: Self-managed worker group configurations (type: any, default: {})
+  - **Supported parameters**: `enable_url_ssl`, `target_group_arn`, `ami_type`, `platform`, `instance_type`, `key_name`, `launch_template_id`, `launch_template_name`, `launch_template_version`, `ebs_optimized`, `disk_size`, `desired_capacity`, `min_size`, `max_size`, `subnet_ids`, `enable_monitoring`, `iam_role_additional_policies`, `bootstrap_user_data`
+- `extend_node_user_data`: Node user data extension (type: string, default: "")
+- `node_volume_size`: Default Pools Node Disk Size, in GB (type: number, default: 30)
+- `node_volume_type`: Default Pools Node Disk Type (gp2, gp3, io1, sc1, st1) (type: string, default: "gp2")
+
+### IAM and Security
+- `map_users`: DEPRECATED - Additional IAM users to add IAM access Entries, aws-auth is deprecated. (type: any, default: [])
+- `access_entries`: Additional IAM users to add IAM access Entries, aws-auth is deprecated. (type: any, default: {})
+  - **Supported parameters**: `principal_arn`, `type` (STANDARD/INTERNATIONAL), `user_name`, `groups`, `policy_arns`, `kubernetes_groups`
+- `policy_iam_users`: IAM User lists to apply to policies (type: list(string), default: [])
+- `creator_admin_permissions`: Enable admin permissions for cluster creator (type: bool, default: true)
+- `role_name_compat`: Role Name Compatibility (type: bool, default: false)
+
+### Addons and Extensions
+- `addons`: EKS Addons configuration (type: any, default: {})
+  - **Supported parameters**: `most_recent`, `service_account_role_arn`, `resolve_conflicts` (NONE/OVERWRITE/PRESERVE), `version`, `preserve_on_delete`, `wait_for_creation`, `wait_for_update`, `configuration_values`, `timeouts`
+- `irsa`: IRSA (IAM Roles for Service Accounts) configuration settings (type: any, default: {})
+  - **Supported parameters**: Map of role configurations with: `name`, `description`, `policy_arns`, `assume_role_action`, `service_account`, `namespace`, `create_policy`, `tags`, `path`, `permissions_boundary`
+
+
+
+- `log_group_retention`: Retention period for CloudWatch log groups in days (type: number, default: 7)
+
+
+
+
+## Examples
+
+This module is designed to be used with Terragrunt for better infrastructure management. Below are different usage scenarios.
+
+### Scenario 1: Basic EKS Cluster with Managed Node Groups
 ```hcl
-module "eks_cluster" {
-  source  = "./path-to-eks-module"
+# terragrunt.hcl
+terraform {
+  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
+}
 
-  cluster_name = "my-eks-cluster"
-  version      = "1.27"
+inputs = {
+  # Organization configuration
+  org = {
+    organization_name = "my-org"
+    organization_unit = "platform"
+    environment_type  = "dev"
+    environment_name  = "development"
+  }
 
-  # If using an existing VPC/subnets
-  vpc_id    = var.vpc_id
-  subnet_ids = var.subnet_ids
+  # VPC configuration (assumed to be created elsewhere)
+  vpc = {
+    vpc_id          = "vpc-12345"
+    private_subnets = ["subnet-priv1", "subnet-priv2"]
+  }
 
-  # Node group configuration
-  node_group_config = {
+  # Kubernetes version
+  cluster_version = "1.29"
+
+  # Managed node groups
+  node_groups = {
     default = {
-      instance_type = "t3.medium"
-      desired_size  = 3
-      min_size      = 1
-      max_size      = 5
+      desired_size = 3
+      min_size     = 1
+      max_size     = 10
+      instance_types = ["t3.medium"]
     }
   }
 
-  enable_logging = true
-
-  tags = {
+  # Add tags
+  extra_tags = {
     Environment = "dev"
-    Project     = "eks-automation"
+    ManagedBy   = "terraform"
   }
 }
 ```
-1. **Define Inputs**
-Replace `var.vpc_id` and `var.subnet_ids` with appropriate variable references or hard-coded strings.
-2. **Adjust Node Group Config**
-Modify the `node_group_config` object to meet your compute and scaling needs.
-3. **Apply**
-Run `terraform init`, `terraform plan`, and `terraform apply` to create the cluster.
 
-## Quick Start
+### Scenario 2: EKS Cluster with Addons and IRSA
+```hcl
+# terragrunt.hcl
+terraform {
+  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
+}
 
-## Prerequisites
-  1. **AWS Credentials**
-  You must have valid AWS credentials configured. Typically, you can do this by setting environment variables (`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`) or by using an AWS profile in `~/.aws/credentials`.
-  2. **Terraform**
-  A properly installed and configured Terraform CLI (preferably version 1.1.0 or higher, though the module may work with earlier versions).
-  3. **VPC and Subnets**
-  An existing VPC and subnets are usually required. This module can optionally create a new VPC and subnets, or you can supply existing ones via input variables.
-  4. **IAM Permissions**
-  The user or role running Terraform must have sufficient permissions to create and manage EKS resources (including IAM roles and policies related to EKS).
+inputs = {
+  org = {
+    organization_name = "my-org"
+    organization_unit = "platform"
+    environment_type  = "prod"
+    environment_name  = "production"
+  }
 
+  vpc = {
+    vpc_id          = "vpc-67890"
+    private_subnets = ["subnet-priv1", "subnet-priv2", "subnet-priv3"]
+  }
+
+  cluster_version = "1.30"
+  access_cidrs    = ["10.0.0.0/8", "172.16.0.0/12"]  # Allow access from VPC and pod CIDRs
+
+  # Addons for common AWS integrations
+  addons = {
+    vpc-cni = {
+      most_recent = true
+      resolve_conflicts_on_create = "OVERWRITE"
+    }
+    coredns = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+  }
+
+  # IRSA roles for service accounts
+  irsa = {
+    roles = {
+      alb_controller = {
+        name                = "alb-controller-role"
+        description         = "Role for AWS Load Balancer Controller"
+        policy_arns         = ["arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"]
+        assume_role_action  = "sts:AssumeRoleWithWebIdentity"
+        service_account     = "aws-load-balancer-controller"
+        namespace           = "kube-system"
+      }
+    }
+  }
+
+  node_groups = {
+    general = {
+      desired_size  = 5
+      min_size      = 3
+      max_size      = 20
+      instance_types = ["m6i.large"]
+      disk_size      = 50
+    }
+  }
+
+  extra_tags = {
+    Environment = "prod"
+    Backup       = "daily"
+    Security     = "highly-confidential"
+  }
+}
+```
+
+### Scenario 3: EKS Cluster with Self-Managed Node Groups
+```hcl
+# terragrunt.hcl
+terraform {
+  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
+}
+
+inputs = {
+  org = {
+    organization_name = "my-org"
+    organization_unit = "platform"
+    environment_type  = "staging"
+    environment_name  = "staging"
+  }
+
+  vpc = {
+    vpc_id          = "vpc-54321"
+    private_subnets = ["subnet-priv1", "subnet-priv2"]
+  }
+
+  cluster_version = "1.28"
+  public_api_server = true  # Enable public access for staging
+
+  # Self-managed node groups for custom AMIs or configurations
+  self_node_groups = {
+    custom = {
+      desired_capacity     = 4
+      min_size            = 2
+      max_size            = 15
+      instance_type       = "m6i.xlarge"
+      key_name            = "my-keypair"
+      disk_size           = 100
+      volume_type         = "gp3"
+    }
+  }
+
+  access_entries = {
+    admin_user = {
+      principal_arn = "arn:aws:iam::123456789012:user/admin"
+      type         = "STANDARD"
+      policy_arns  = [
+        "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      ]
+    }
+  }
+
+  extra_tags = {
+    Environment = "staging"
+    CostCenter  = "engineering"
+  }
+}
+```
+
+### Scenario 4: Hub-and-Spoke Architecture Setup
+```hcl
+# terragrunt.hcl for hub cluster
+terraform {
+  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
+}
+
+inputs = {
+  is_hub = true  # This is the hub cluster
+
+  org = {
+    organization_name = "my-org"
+    organization_unit = "platform"
+    environment_type  = "hub"
+    environment_name  = "hub"
+  }
+
+  vpc = {
+    vpc_id          = "vpc-hub01"
+    private_subnets = ["subnet-priv1", "subnet-priv2"]
+  }
+
+  cluster_version = "1.29"
+
+  node_groups = {
+    hub_nodes = {
+      desired_size  = 3
+      min_size      = 3
+      max_size      = 3
+      instance_types = ["t3.large"]
+    }
+  }
+
+  # Central logging and monitoring addons
+  addons = {
+    vpc-cni = {
+      most_recent = true
+    }
+    coredns = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+  }
+}
+```
+
+### Scenario 5: Multi-Zone EKS Cluster with Spot Instances
+```hcl
+# terragrunt.hcl
+terraform {
+  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
+}
+
+inputs = {
+  org = {
+    organization_name = "my-org"
+    organization_unit = "platform"
+    environment_type  = "dev"
+    environment_name  = "development"
+  }
+
+  vpc = {
+    vpc_id          = "vpc-99999"
+    private_subnets = ["subnet-az1", "subnet-az2", "subnet-az3"]  # Multi-AZ subnets
+  }
+
+  cluster_version = "1.30"
+  access_cidrs    = ["0.0.0.0/0"]  # Public access with restricted CIDRs in production
+
+  node_groups = {
+    on_demand = {
+      desired_size  = 2
+      min_size      = 1
+      max_size      = 10
+      instance_types = ["m6i.large"]
+      capacity_type  = "ON_DEMAND"
+      subnet_ids     = local.vpc.private_subnets  # Can specify specific subnets per node group
+    }
+    spot = {
+      desired_size  = 5
+      min_size      = 0
+      max_size      = 50
+      instance_types = ["m5.large", "m5a.large", "m6a.large"]
+      capacity_type  = "SPOT"
+      disk_size      = 40
+    }
+  }
+
+  log_group_retention = 30  # Keep logs longer for troubleshooting
+
+  extra_tags = {
+    Environment = "dev"
+    CostOptimization = "enabled"
+    SpotUsage = "enabled"
+  }
+}
 
 
 
