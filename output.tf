@@ -165,14 +165,14 @@ output "keda_irsa_role" {
 
 output "node_role" {
   value = {
-    role_arn = aws_iam_role.worker.arn
-    name     = aws_iam_role.worker.name
+    arn  = aws_iam_role.worker.arn
+    name = aws_iam_role.worker.name
   }
 }
 
 output "cluster_role" {
   value = {
-    role_arn = aws_iam_role.master.arn
-    name     = aws_iam_role.master.name
+    arn  = aws_iam_role.master.arn
+    name = aws_iam_role.master.name
   }
 }
