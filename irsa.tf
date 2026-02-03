@@ -197,13 +197,13 @@ module "velero_irsa_role" {
 }
 
 module "prometheus_irsa_role" {
-  source                                          = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
-  version                                         = "~> 6.2"
-  create                                          = try(var.irsa.prometheus.enabled, false)
-  name                                            = "eks-${local.system_name}-prometheus-role"
-  policy_name                                     = "eks-${local.system_name}-prometheus-role-pol"
-  use_name_prefix                                 = false
-  attach_amazon_managed_service_prometheus_policy = true
+  source                                           = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version                                          = "~> 6.2"
+  create                                           = try(var.irsa.prometheus.enabled, false)
+  name                                             = "eks-${local.system_name}-prometheus-role"
+  policy_name                                      = "eks-${local.system_name}-prometheus-role-pol"
+  use_name_prefix                                  = false
+  attach_amazon_managed_service_prometheus_policy  = true
   amazon_managed_service_prometheus_workspace_arns = try(var.irsa.prometheus.workspace_arns, [])
   oidc_providers = {
     main = {
