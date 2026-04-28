@@ -14,9 +14,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.22.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | 2.6.1 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.20 |
+| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
 
 ## Modules
 
@@ -130,6 +130,7 @@
 | <a name="output_cluster_ca_certificate_base64"></a> [cluster\_ca\_certificate\_base64](#output\_cluster\_ca\_certificate\_base64) | n/a |
 | <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | n/a |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | n/a |
+| <a name="output_cluster_role"></a> [cluster\_role](#output\_cluster\_role) | n/a |
 | <a name="output_cluster_sg_default"></a> [cluster\_sg\_default](#output\_cluster\_sg\_default) | n/a |
 | <a name="output_cluster_sg_master"></a> [cluster\_sg\_master](#output\_cluster\_sg\_master) | n/a |
 | <a name="output_cluster_sg_worker"></a> [cluster\_sg\_worker](#output\_cluster\_sg\_worker) | n/a |
@@ -143,6 +144,7 @@
 | <a name="output_kms_key_id"></a> [kms\_key\_id](#output\_kms\_key\_id) | n/a |
 | <a name="output_kms_key_name"></a> [kms\_key\_name](#output\_kms\_key\_name) | n/a |
 | <a name="output_lb_irsa_role"></a> [lb\_irsa\_role](#output\_lb\_irsa\_role) | n/a |
+| <a name="output_node_role"></a> [node\_role](#output\_node\_role) | n/a |
 | <a name="output_prometheus_irsa_role"></a> [prometheus\_irsa\_role](#output\_prometheus\_irsa\_role) | n/a |
 | <a name="output_s3_csi_irsa_role"></a> [s3\_csi\_irsa\_role](#output\_s3\_csi\_irsa\_role) | n/a |
 | <a name="output_secrets_store_irsa_role"></a> [secrets\_store\_irsa\_role](#output\_secrets\_store\_irsa\_role) | n/a |
