@@ -62,7 +62,15 @@ inputs = {
   org        = local.env_vars.org
   spoke_def  = local.spoke_vars.spoke
   {{- range .requiredVariables }}
-  {{- if ne .Name "org" }}
+  {{- if and $.vpc_enabled (eq .Name "vpc") }}
+  vpc = {
+    vpc_id                      = dependency.vpc.outputs.vpc_id
+    private_subnets             = dependency.vpc.outputs.{{ $.subnet_source }}_subnets
+    ssh_admin_security_group_id = dependency.vpc.outputs.ssh_admin_security_group_id
+    local_network_cidrs         = try(local.local_vars.vpc.local_network_cidrs, [])
+    vpn_accesses                = dependency.vpc.outputs.vpn_accesses
+  }
+  {{- else if ne .Name "org" }}
   {{ .Name }} = local.local_vars.{{ .Name }}
   {{- end }}
   {{- end }}
@@ -71,21 +79,21 @@ inputs = {
   {{- if and $.vpc_enabled (eq .Name "vpc") }}
   vpc = {
     vpc_id                      = dependency.vpc.outputs.vpc_id
-    private_subnets             = dependency.vpc.outputs.{{ $.subnet_source}}_subnets
+    private_subnets             = dependency.vpc.outputs.{{ $.subnet_source }}_subnets
     ssh_admin_security_group_id = dependency.vpc.outputs.ssh_admin_security_group_id
-    local_network_cidrs         = local.local_vars.vpc.local_network_cidrs
+    local_network_cidrs         = try(local.local_vars.vpc.local_network_cidrs, [])
     vpn_accesses                = dependency.vpc.outputs.vpn_accesses
   }
   {{- else if eq .Name "irsa" }}
-  irsa = try(local.local_vars.irsa_configuration, {})
+  irsa = try(local.local_vars.irsa, local.local_vars.irsa_configuration, {})
   {{- else if eq .Name "public_api_server" }}
-  public_api_server = try(local.local_vars.api_server.public, {{ .DefaultValue }})
+  public_api_server = try(local.local_vars.public_api_server, local.local_vars.api_server.public, {{ .DefaultValue }})
   {{- else if eq .Name "private_api_server" }}
-  public_api_server = try(local.local_vars.api_server.private, {{ .DefaultValue }})
+  private_api_server = try(local.local_vars.private_api_server, local.local_vars.api_server.private, {{ .DefaultValue }})
   {{- else if eq .Name "node_volume_size" }}
-  node_volume_size          = try(local.local_vars.default_node_disk_size, local.local_vars.default_node.disk.size, {{ .DefaultValue }})
+  node_volume_size = try(local.local_vars.node_volume_size, local.local_vars.default_node_disk_size, local.local_vars.default_node.disk.size, {{ .DefaultValue }})
   {{- else if eq .Name "node_volume_type" }}
-  node_volume_type          = try(local.local_vars.default_node_disk_type, local.local_vars.default_node.disk.type, {{ .DefaultValue }})
+  node_volume_type = try(local.local_vars.node_volume_type, local.local_vars.default_node_disk_type, local.local_vars.default_node.disk.type, {{ .DefaultValue }})
   {{- else }}
   {{ .Name }} = try(local.local_vars.{{ .Name }}, {{ .DefaultValue }})
   {{- end }}

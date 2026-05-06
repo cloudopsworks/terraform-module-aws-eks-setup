@@ -14,9 +14,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.20 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.22.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.6.1 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
 
 ## Modules
 
@@ -95,28 +95,28 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_cidrs"></a> [access\_cidrs](#input\_access\_cidrs) | CIDR list to allow access to EKS cluster | `list(string)` | `[]` | no |
-| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Additional IAM users to add IAM access Entries, aws-auth is deprecated. | `any` | `{}` | no |
-| <a name="input_addons"></a> [addons](#input\_addons) | EKS Addons | `any` | `{}` | no |
-| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes Version for EKS setup/upgrade | `string` | `"1.20"` | no |
-| <a name="input_creator_admin_permissions"></a> [creator\_admin\_permissions](#input\_creator\_admin\_permissions) | Enable admin permissions for cluster creator | `bool` | `true` | no |
-| <a name="input_extend_node_user_data"></a> [extend\_node\_user\_data](#input\_extend\_node\_user\_data) | n/a | `string` | `""` | no |
+| <a name="input_access_cidrs"></a> [access\_cidrs](#input\_access\_cidrs) | CIDR list allowed to access the public EKS API endpoint. | `list(string)` | `[]` | no |
+| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Additional EKS access entries keyed by logical name. | `any` | `{}` | no |
+| <a name="input_addons"></a> [addons](#input\_addons) | Optional EKS addon toggles layered on top of the base coredns, kube-proxy, vpc-cni, and ebs-csi addons. | `any` | `{}` | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version for EKS setup or upgrade. | `string` | `"1.20"` | no |
+| <a name="input_creator_admin_permissions"></a> [creator\_admin\_permissions](#input\_creator\_admin\_permissions) | Grant the Terraform caller cluster administrator access through an EKS access entry. | `bool` | `true` | no |
+| <a name="input_extend_node_user_data"></a> [extend\_node\_user\_data](#input\_extend\_node\_user\_data) | Extra user-data snippet reserved for node bootstrap customizations. | `string` | `""` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
-| <a name="input_irsa"></a> [irsa](#input\_irsa) | IRSA configuration settings | `any` | `{}` | no |
+| <a name="input_irsa"></a> [irsa](#input\_irsa) | IRSA configuration settings for supported EKS controllers and CSI drivers. | `any` | `{}` | no |
 | <a name="input_is_hub"></a> [is\_hub](#input\_is\_hub) | Establish this is a HUB or spoke configuration | `bool` | `false` | no |
-| <a name="input_log_group_retention"></a> [log\_group\_retention](#input\_log\_group\_retention) | Retention period for CloudWatch log groups in days | `number` | `7` | no |
-| <a name="input_map_users"></a> [map\_users](#input\_map\_users) | Additional IAM users to add IAM access Entries, aws-auth is deprecated. | `any` | `[]` | no |
-| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Managed worker group list for EKS terraform module. | `any` | `{}` | no |
-| <a name="input_node_volume_size"></a> [node\_volume\_size](#input\_node\_volume\_size) | Default Pools Node Disk Size, in GB | `number` | `30` | no |
-| <a name="input_node_volume_type"></a> [node\_volume\_type](#input\_node\_volume\_type) | Default Pools Node Disk Type, gp2 \| gp3 \| io1 \| sc1 \| st1 | `string` | `"gp2"` | no |
+| <a name="input_log_group_retention"></a> [log\_group\_retention](#input\_log\_group\_retention) | CloudWatch log group retention period in days for EKS control-plane logs. | `number` | `7` | no |
+| <a name="input_map_users"></a> [map\_users](#input\_map\_users) | DEPRECATED. Additional IAM users converted to EKS access entries; aws-auth is deprecated. | `any` | `[]` | no |
+| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Managed worker group map for the upstream EKS Terraform module. | `any` | `{}` | no |
+| <a name="input_node_volume_size"></a> [node\_volume\_size](#input\_node\_volume\_size) | Default root EBS volume size, in GB, for node groups. | `number` | `30` | no |
+| <a name="input_node_volume_type"></a> [node\_volume\_type](#input\_node\_volume\_type) | Default root EBS volume type for node groups. | `string` | `"gp3"` | no |
 | <a name="input_org"></a> [org](#input\_org) | n/a | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
-| <a name="input_policy_iam_users"></a> [policy\_iam\_users](#input\_policy\_iam\_users) | IAM User lists to apply to policies | `list(string)` | `[]` | no |
-| <a name="input_private_api_server"></a> [private\_api\_server](#input\_private\_api\_server) | Private API server access | `bool` | `true` | no |
-| <a name="input_public_api_server"></a> [public\_api\_server](#input\_public\_api\_server) | Public API server access | `bool` | `false` | no |
-| <a name="input_role_name_compat"></a> [role\_name\_compat](#input\_role\_name\_compat) | Role Name Compatibility | `bool` | `false` | no |
-| <a name="input_self_node_groups"></a> [self\_node\_groups](#input\_self\_node\_groups) | Worker group list for EKS terraform module. | `any` | `{}` | no |
+| <a name="input_policy_iam_users"></a> [policy\_iam\_users](#input\_policy\_iam\_users) | IAM principal ARN list to add as KMS key administrators. | `list(string)` | `[]` | no |
+| <a name="input_private_api_server"></a> [private\_api\_server](#input\_private\_api\_server) | Enable private access to the EKS API server endpoint. | `bool` | `true` | no |
+| <a name="input_public_api_server"></a> [public\_api\_server](#input\_public\_api\_server) | Enable public access to the EKS API server endpoint. | `bool` | `false` | no |
+| <a name="input_role_name_compat"></a> [role\_name\_compat](#input\_role\_name\_compat) | Use legacy control-plane IAM role naming for compatibility. | `bool` | `false` | no |
+| <a name="input_self_node_groups"></a> [self\_node\_groups](#input\_self\_node\_groups) | Self-managed worker group map for the upstream EKS Terraform module. | `any` | `{}` | no |
 | <a name="input_spoke_def"></a> [spoke\_def](#input\_spoke\_def) | n/a | `string` | `"001"` | no |
-| <a name="input_vpc"></a> [vpc](#input\_vpc) | VPC configuration entry | `any` | n/a | yes |
+| <a name="input_vpc"></a> [vpc](#input\_vpc) | VPC configuration entry. Requires vpc\_id, private\_subnets, ssh\_admin\_security\_group\_id, and optional local\_network\_cidrs/vpn\_accesses. | `any` | n/a | yes |
 
 ## Outputs
 

@@ -32,7 +32,7 @@ variables:
     default: "../vpc"
   - name: subnet_source
     order: 4
-    description: "Source for subnets, either 'intra' or 'private', reqyured if vpc_enabled is true"
+    description: "Source for subnets, either 'intra' or 'private', required if vpc_enabled is true"
     type: enum
     default: private
     options:
