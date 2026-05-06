@@ -10,14 +10,12 @@
 
 [![cloudopsworks][logo]](https://cloudopsworks.co/)
 
-# Terraform AWS EKS Cluster Setup
+# Terraform AWS EKS Cluster Setup [![Latest Release](https://img.shields.io/github/release/cloudopsworks/terraform-module-aws-eks-setup.svg?style=for-the-badge)](https://github.com/cloudopsworks/terraform-module-aws-eks-setup/releases/latest) [![Last Updated](https://img.shields.io/github/last-commit/cloudopsworks/terraform-module-aws-eks-setup.svg?style=for-the-badge)](https://github.com/cloudopsworks/terraform-module-aws-eks-setup/commits)
 
 
-This Terraform module simplifies the creation and management of an Amazon Elastic Kubernetes
-Service (EKS) cluster on AWS. It provides a robust configuration that sets up essential
-components of the EKS cluster, including worker node groups, networking, and IAM roles. 
-By leveraging this module, teams can quickly provision a production-ready Kubernetes 
-environment and scale as needed.
+Terraform module for provisioning and operating an Amazon EKS cluster with managed and self-managed node groups,
+opinionated IAM roles, KMS encryption, cluster security groups, EKS access entries, core add-ons, optional add-on
+toggles, and IRSA roles for common Kubernetes controllers.
 
 
 ---
@@ -47,19 +45,19 @@ We have [*lots of terraform modules*][terraform_modules] that are Open Source an
 
 ## Introduction
 
-## Module Features
-  1. **EKS Cluster Provisioning**
-  Creates an Amazon EKS cluster, including all necessary IAM roles, policies, and cluster configuration.
-  2. **Node Groups**
-  Manages one or multiple node groups, allowing you to specify instance types, scaling configurations, and machine images (AMIs).
-  3. **Networking**
-  Optionally creates or accepts references to existing networking resources (VPC, subnets, and security groups). It configures the EKS control plane and worker nodes with the required inbound/outbound rules.
-  4. **Logging and Monitoring**
-  Enables various logging and monitoring options (e.g., AWS CloudWatch logging) to capture cluster activities.
-  5. **Auto-Scaling**
-  Uses AWS Auto Scaling to manage the number of worker nodes based on demand, helping to optimize costs and performance.
-  6. **Optimized Defaults**
-  Provides commonly used defaults to simplify the setup process while remaining flexible for customization.
+This module wraps the upstream `terraform-aws-modules/eks/aws` module with Cloud Ops Works naming, tagging, IAM,
+KMS, security-group, and Terragrunt scaffolding conventions. It is intended for implementation repositories that
+bootstrap EKS clusters consistently across hub-and-spoke environments.
+
+The module provisions and configures:
+- An Amazon EKS control plane with API access controls and encrypted secrets.
+- Managed and self-managed worker node groups with encrypted EBS defaults.
+- Control-plane and worker IAM roles plus KMS permissions.
+- EKS access entries, including migration support from deprecated `map_users` input.
+- Base EKS add-ons (`coredns`, `kube-proxy`, `vpc-cni`, `aws-ebs-csi-driver`) and optional add-ons for EFS,
+  snapshots, CloudWatch Observability, Pod Identity, and ADOT.
+- Optional IRSA roles for VPC CNI, AWS Load Balancer Controller, EBS/EFS/S3 CSI drivers, ExternalDNS,
+  Cluster Autoscaler, cert-manager, Velero, Prometheus, CloudWatch, Secrets Store CSI, ADOT, and KEDA.
 
 ## Usage
 
@@ -68,322 +66,354 @@ We have [*lots of terraform modules*][terraform_modules] that are Open Source an
 Instead pin to the release tag (e.g. `?ref=vX.Y.Z`) of one of our [latest releases](https://github.com/cloudopsworks/terraform-module-aws-eks-setup/releases).
 
 
-## Module Options (Inputs)
+## Terragrunt scaffolding workflow
 
-Below is a comprehensive list of all input variables for this module:
+Create the target deployment directory first, then run Terragrunt scaffold from that directory. Do not use
+`--working-dir`; scaffold writes files into the current directory.
 
-### General Configuration
-- `is_hub`: Establish this is a HUB or spoke configuration (type: bool, default: false)
-- `spoke_def`: Spoke definition (for hub-spoke architecture) (type: string, default: "001")
-- `org`: Organization configuration (type: object({organization_name = string, organization_unit = string, environment_type = string, environment_name = string}), required)
-- `extra_tags`: Extra tags to apply to resources (type: map(string), default: {})
+```sh
+# 1. Create and enter the target deployment directory
+mkdir -p dev/us-east-1/platform/eks
+cd dev/us-east-1/platform/eks
 
-### VPC and Networking
-- `vpc`: VPC configuration entry (requires vpc_id, private_subnets, etc.) (type: any, required)
+# 2. Scaffold the module
+terragrunt scaffold github.com/cloudopsworks/terraform-module-aws-eks-setup
 
-### Cluster Configuration
-- `cluster_version`: Kubernetes Version for EKS setup/upgrade (type: string, default: "1.20")
-- `access_cidrs`: CIDR list to allow access to EKS cluster (type: list(string), default: [])
-- `public_api_server`: Public API server access (type: bool, default: false)
-- `private_api_server`: Private API server access (type: bool, default: true)
+# 3. Edit inputs.yaml with deployment-specific values
+#    all module keys and comments are pre-populated from .boilerplate/inputs.yaml
+vi inputs.yaml
 
-### Node Groups
-- `node_groups`: Managed worker group configurations (maps to AWS EKS managed node groups) (type: any, default: {})
-  - **Supported parameters**: `ami_type`, `capacity_type` (ON_DEMAND/SPOT), `disk_size`, `instance_types`, `desired_size`, `min_size`, `max_size`, `subnet_ids`, `additional_security_group_ids`, `iam_role_additional_policies`, `labels`, `taints`, `update_config`, `ami_id`, `user_data`, `enable_bootstrap_user_data`, `platform`, `use_name_prefix`, `enable_detailed_monitoring`, `availability_zones`
-- `self_node_groups`: Self-managed worker group configurations (type: any, default: {})
-  - **Supported parameters**: `enable_url_ssl`, `target_group_arn`, `ami_type`, `platform`, `instance_type`, `key_name`, `launch_template_id`, `launch_template_name`, `launch_template_version`, `ebs_optimized`, `disk_size`, `desired_capacity`, `min_size`, `max_size`, `subnet_ids`, `enable_monitoring`, `iam_role_additional_policies`, `bootstrap_user_data`
-- `extend_node_user_data`: Node user data extension (type: string, default: "")
-- `node_volume_size`: Default Pools Node Disk Size, in GB (type: number, default: 30)
-- `node_volume_type`: Default Pools Node Disk Type (gp2, gp3, io1, sc1, st1) (type: string, default: "gp2")
+# 4. Apply
+terragrunt apply
+```
 
-### IAM and Security
-- `map_users`: DEPRECATED - Additional IAM users to add IAM access Entries, aws-auth is deprecated. (type: any, default: [])
-- `access_entries`: Additional IAM users to add IAM access Entries, aws-auth is deprecated. (type: any, default: {})
-  - **Supported parameters**: `principal_arn`, `type` (STANDARD/INTERNATIONAL), `user_name`, `groups`, `policy_arns`, `kubernetes_groups`
-- `policy_iam_users`: IAM User lists to apply to policies (type: list(string), default: [])
-- `creator_admin_permissions`: Enable admin permissions for cluster creator (type: bool, default: true)
-- `role_name_compat`: Role Name Compatibility (type: bool, default: false)
+## Generated `inputs.yaml`
 
-### Addons and Extensions
-- `addons`: EKS Addons configuration (type: any, default: {})
-  - **Supported parameters**: `most_recent`, `service_account_role_arn`, `resolve_conflicts` (NONE/OVERWRITE/PRESERVE), `version`, `preserve_on_delete`, `wait_for_creation`, `wait_for_update`, `configuration_values`, `timeouts`
-- `irsa`: IRSA (IAM Roles for Service Accounts) configuration settings (type: any, default: {})
-  - **Supported parameters**: Map of role configurations with: `name`, `description`, `policy_arns`, `assume_role_action`, `service_account`, `namespace`, `create_policy`, `tags`, `path`, `permissions_boundary`
+The scaffold command copies the following annotated module input template. `is_hub`, `spoke_def`, `org`, and
+`extra_tags` are intentionally not listed here because they are supplied by the Terragrunt hierarchy and boilerplate.
 
+```yaml
+# Module configuration
 
+vpc:
+  vpc_id: ""                         # (Required when scaffold vpc_enabled=false) Existing VPC ID where EKS resources are created. When vpc_enabled=true this is populated from the VPC dependency.
+  private_subnets: []                 # (Required when scaffold vpc_enabled=false) Private or intra subnet IDs for the cluster and node groups. When vpc_enabled=true this is populated from the VPC dependency using subnet_source.
+  ssh_admin_security_group_id: ""     # (Required when scaffold vpc_enabled=false) Security group ID allowed to reach cluster and worker access rules. When vpc_enabled=true this is populated from the VPC dependency.
+  local_network_cidrs: []             # (Optional) CIDR blocks allowed to reach the private API endpoint. Default: [].
+  vpn_accesses: []                    # (Optional) Workstation or VPN CIDR blocks allowed to reach the API endpoint. When vpc_enabled=true this is populated from the VPC dependency. Default: [].
 
-- `log_group_retention`: Retention period for CloudWatch log groups in days (type: number, default: 7)
+cluster_version: "1.20"              # (Optional) Kubernetes version for EKS setup or upgrade. Default: "1.20".
+access_cidrs: []                      # (Optional) CIDR list allowed to access the public EKS API endpoint. Default: [].
+public_api_server: false              # (Optional) Enable public access to the EKS API server endpoint. Default: false.
+private_api_server: true              # (Optional) Enable private access to the EKS API server endpoint. Default: true.
+creator_admin_permissions: true       # (Optional) Grant the Terraform caller cluster administrator access through an EKS access entry. Default: true.
+log_group_retention: 7                # (Optional) CloudWatch log group retention period in days for EKS control-plane logs. Default: 7.
+role_name_compat: false               # (Optional) Use legacy control-plane IAM role naming for compatibility. Default: false.
+policy_iam_users: []                  # (Optional) IAM principal ARNs granted KMS key administration permissions. Default: [].
+extend_node_user_data: ""            # (Optional) Extra user-data snippet reserved for node bootstrap customizations. Default: "".
+node_volume_size: 30                  # (Optional) Default root EBS volume size, in GB, for node groups. Default: 30.
+node_volume_type: "gp3"              # (Optional) Default root EBS volume type for node groups. Valid values include gp2, gp3, io1, io2, sc1, st1. Default: "gp3".
 
+node_groups: {}                       # (Optional) EKS managed node groups keyed by logical name. Default: {}.
+# node_groups:
+#   default:
+#     desired_size: 2                 # (Optional) Desired managed node count. Default: upstream module default.
+#     min_size: 1                     # (Optional) Minimum managed node count. Default: upstream module default.
+#     max_size: 5                     # (Optional) Maximum managed node count. Default: upstream module default.
+#     instance_types: ["m6i.large"]   # (Optional) EC2 instance type list. Default: module node group defaults.
+#     capacity_type: "ON_DEMAND"      # (Optional) Capacity type. Valid values: ON_DEMAND, SPOT. Default: ON_DEMAND.
+#     ami_type: "AL2023_x86_64_STANDARD" # (Optional) Managed node AMI type supported by EKS. Default: upstream module default.
+#     disk_size: 50                   # (Optional) Root volume size in GB when not using block_device_mappings. Default: module node group defaults.
+#     subnet_ids: []                  # (Optional) Subnet IDs for this group. Default: vpc.private_subnets.
+#     labels: {}                      # (Optional) Kubernetes labels for nodes. Default: {}.
+#     taints: {}                      # (Optional) Kubernetes taints for nodes. Default: {}.
+#     update_config: {}               # (Optional) Managed node update configuration. Default: upstream module default.
+#     iam_role_additional_policies: {} # (Optional) Additional IAM policy ARNs attached to the node role. Default: {}.
 
+self_node_groups: {}                  # (Optional) Self-managed node groups keyed by logical name. Default: {}.
+# self_node_groups:
+#   default:
+#     desired_capacity: 2             # (Optional) Desired Auto Scaling Group capacity. Default: upstream module default.
+#     min_size: 1                     # (Optional) Minimum Auto Scaling Group capacity. Default: upstream module default.
+#     max_size: 5                     # (Optional) Maximum Auto Scaling Group capacity. Default: upstream module default.
+#     instance_type: "m6i.large"      # (Optional) EC2 instance type. Default: module self-managed defaults.
+#     instance_types: ["m6i.large"]   # (Optional) Mixed-instance type list. Default: module self-managed defaults.
+#     ami_type: "AL2023_x86_64_STANDARD" # (Optional) AMI family/type supported by the upstream module. Default: upstream module default.
+#     key_name: ""                    # (Optional) SSH key pair name. Default: module-generated key pair.
+#     subnet_ids: []                  # (Optional) Subnet IDs for this group. Default: vpc.private_subnets.
+#     enable_monitoring: true         # (Optional) Enable detailed monitoring. Default: upstream module default.
+#     iam_role_additional_policies: [] # (Optional) Additional IAM policy ARNs attached to the node role. Default: module self-managed defaults.
+#     bootstrap_user_data: ""         # (Optional) Bootstrap user-data content. Default: upstream module default.
+
+access_entries: {}                    # (Optional) Additional EKS access entries keyed by logical name. Default: {}.
+# access_entries:
+#   admin:
+#     principal_arn: "arn:aws:iam::123456789012:role/platform-admin" # (Required) IAM principal ARN granted cluster access.
+#     type: "STANDARD"                # (Optional) EKS access entry type. Valid values: STANDARD, EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX. Default: STANDARD.
+#     kubernetes_groups: []           # (Optional) Kubernetes RBAC groups for this principal. Default: null.
+#     user_name: ""                   # (Optional) Kubernetes username override. Default: null.
+#     tags: {}                        # (Optional) Tags applied to the access entry. Default: {}.
+#     policy_associations: {}         # (Optional) EKS access policy associations keyed by name. Default: {}.
+#       admin:
+#         policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" # (Required) EKS cluster access policy ARN.
+#         access_scope:
+#           type: "cluster"           # (Required) Access scope type. Valid values: cluster, namespace.
+#           namespaces: []            # (Optional) Namespace list when type is namespace. Default: null.
+
+map_users: []                         # (Optional, deprecated) Deprecated aws-auth style user mappings. Default: [].
+# map_users:
+#   - username: "platform-admin"      # (Required) Kubernetes username for the mapped IAM user.
+#     userarn: "arn:aws:iam::123456789012:user/platform-admin" # (Required) IAM user ARN.
+#     policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" # (Required) EKS access policy ARN.
+#     namespaces: []                  # (Optional) Namespace scope list. Empty list means cluster scope. Default: [].
+#     type: "STANDARD"                # (Optional) EKS access entry type. Valid values: STANDARD, EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX. Default: STANDARD.
+
+addons:
+  efs:
+    enabled: false                    # (Optional) Enable aws-efs-csi-driver addon. Default: false.
+  snapshot:
+    enabled: false                    # (Optional) Enable snapshot-controller addon. Default: false.
+  cloudwatch:
+    enabled: false                    # (Optional) Enable amazon-cloudwatch-observability addon. Default: false.
+  pod_identity:
+    enabled: false                    # (Optional) Enable eks-pod-identity-agent addon. Default: false.
+  adot:
+    enabled: false                    # (Optional) Enable AWS Distro for OpenTelemetry addon. Default: false.
+
+irsa:
+  vpc_cni:
+    enabled: false                    # (Optional) Create/use the AWS VPC CNI IRSA role. Default: false.
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  lb:
+    enabled: false                    # (Optional) Create/use the AWS Load Balancer Controller IRSA role. Default: false.
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  ebs_csi:
+    enabled: false                    # (Optional) Create/use the AWS EBS CSI driver IRSA role. Default: false.
+    kms_cmk_ids: []                   # (Optional) Additional KMS CMK ARNs allowed by the EBS CSI policy. Default: [].
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  efs_csi:
+    enabled: false                    # (Optional) Create/use the AWS EFS CSI driver IRSA role. Default: false.
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  external_dns:
+    enabled: false                    # (Optional) Create/use the ExternalDNS IRSA role. Default: false.
+    hosted_zone_arns: []              # (Optional) Route53 hosted zone ARNs managed by ExternalDNS. Default: [].
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  cluster_autoscaler:
+    enabled: false                    # (Optional) Create/use the Cluster Autoscaler IRSA role. Default: false.
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  cert_manager:
+    enabled: false                    # (Optional) Create/use the cert-manager IRSA role. Default: false.
+    hosted_zone_arns: []              # (Optional) Route53 hosted zone ARNs for DNS validation. Default: [].
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  s3_csi:
+    enabled: false                    # (Optional) Create/use the Mountpoint for Amazon S3 CSI IRSA role. Default: false.
+    bucket_arns: []                   # (Optional) S3 bucket ARNs allowed by the CSI policy. Default: [].
+    kms_arns: []                      # (Optional) KMS key ARNs allowed by the CSI policy. Default: [].
+    path_arns: []                     # (Optional) S3 path ARNs allowed by the CSI policy. Default: [].
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  velero:
+    enabled: false                    # (Optional) Create/use the Velero IRSA role. Default: false.
+    bucket_arns: []                   # (Optional) Backup bucket ARNs. Default: [].
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  prometheus:
+    enabled: false                    # (Optional) Create/use the Amazon Managed Service for Prometheus IRSA role. Default: false.
+    workspace_arns: []                # (Optional) AMP workspace ARNs. Default: [].
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  cloudwatch:
+    enabled: false                    # (Optional) Create/use the CloudWatch Observability IRSA role. Default: false.
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  secrets_store:
+    enabled: false                    # (Optional) Create/use the Secrets Store CSI driver IRSA role. Default: false.
+    secrets_manager_arns: []          # (Optional) AWS Secrets Manager secret ARNs. Default: [].
+    secrets_manager_create_permission: false # (Optional) Allow creating Secrets Manager secrets. Default: false.
+    ssm_parameter_arns: []            # (Optional) SSM parameter ARNs. Default: [].
+    kms_key_arns: []                  # (Optional) KMS key ARNs used by secrets or parameters. Default: [].
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  adot:
+    enabled: false                    # (Optional) Create/use the AWS Distro for OpenTelemetry IRSA role. Default: false.
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+  keda:
+    enabled: false                    # (Optional) Create/use the KEDA IRSA role. Default: false.
+    namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+```
+
+## Generated `terragrunt.hcl`
+
+With the default scaffold answers (`vpc_enabled=true`, `vpc_module_path=../vpc`, `subnet_source=private`), scaffold
+renders the following wiring. The `locals` block loads `inputs.yaml` as `local.local_vars`, then the `inputs` block
+maps each module variable from `local.local_vars` or from the VPC dependency.
+
+```hcl
+locals {
+  local_vars  = yamldecode(file("./inputs.yaml"))
+  spoke_vars  = yamldecode(file(find_in_parent_folders("spoke-inputs.yaml")))
+  region_vars = yamldecode(file(find_in_parent_folders("region-inputs.yaml")))
+  env_vars    = yamldecode(file(find_in_parent_folders("env-inputs.yaml")))
+  global_vars = yamldecode(file(find_in_parent_folders("global-inputs.yaml")))
+
+  local_tags  = jsondecode(file("./local-tags.json"))
+  spoke_tags  = jsondecode(file(find_in_parent_folders("spoke-tags.json")))
+  region_tags = jsondecode(file(find_in_parent_folders("region-tags.json")))
+  env_tags    = jsondecode(file(find_in_parent_folders("env-tags.json")))
+  global_tags = jsondecode(file(find_in_parent_folders("global-tags.json")))
+
+  tags = merge(
+    local.global_tags,
+    local.env_tags,
+    local.region_tags,
+    local.spoke_tags,
+    local.local_tags
+  )
+}
+
+include "root" {
+  path = find_in_parent_folders("root.hcl")
+}
+
+dependency "vpc" {
+  config_path = "../vpc"
+
+  mock_outputs_allowed_terraform_commands = ["validate", "destroy"]
+  mock_outputs = {
+    ssh_admin_security_group_id = "sg-12345678901234"
+    vpn_accesses                = ["1.2.3.4/32", "5.6.7.8/32"]
+    intra_subnets               = ["subnet-01234567890123456", "subnet-01234567890123457", "subnet-01234567890123458"]
+    private_subnets             = ["subnet-01234567890123456", "subnet-01234567890123457", "subnet-01234567890123458"]
+    vpc_id                      = "vpc-12345678901234"
+    vpc_cidr_block              = "1.0.0.0/8"
+    database_route_table_ids    = []
+  }
+}
+
+terraform {
+  source = "github.com/cloudopsworks/terraform-module-aws-eks-setup"
+}
+
+inputs = {
+  is_hub    = false
+  org       = local.env_vars.org
+  spoke_def = local.spoke_vars.spoke
+  vpc = {
+    vpc_id                      = dependency.vpc.outputs.vpc_id
+    private_subnets             = dependency.vpc.outputs.private_subnets
+    ssh_admin_security_group_id = dependency.vpc.outputs.ssh_admin_security_group_id
+    local_network_cidrs         = try(local.local_vars.vpc.local_network_cidrs, [])
+    vpn_accesses                = dependency.vpc.outputs.vpn_accesses
+  }
+  extend_node_user_data    = try(local.local_vars.extend_node_user_data, "")
+  map_users                = try(local.local_vars.map_users, [])
+  access_entries           = try(local.local_vars.access_entries, {})
+  node_groups              = try(local.local_vars.node_groups, {})
+  self_node_groups         = try(local.local_vars.self_node_groups, {})
+  cluster_version          = try(local.local_vars.cluster_version, "1.20")
+  policy_iam_users         = try(local.local_vars.policy_iam_users, [])
+  access_cidrs             = try(local.local_vars.access_cidrs, [])
+  irsa                     = try(local.local_vars.irsa, local.local_vars.irsa_configuration, {})
+  public_api_server        = try(local.local_vars.public_api_server, local.local_vars.api_server.public, false)
+  private_api_server       = try(local.local_vars.private_api_server, local.local_vars.api_server.private, true)
+  node_volume_size         = try(local.local_vars.node_volume_size, local.local_vars.default_node_disk_size, local.local_vars.default_node.disk.size, 30)
+  node_volume_type         = try(local.local_vars.node_volume_type, local.local_vars.default_node_disk_type, local.local_vars.default_node.disk.type, "gp3")
+  role_name_compat         = try(local.local_vars.role_name_compat, false)
+  addons                   = try(local.local_vars.addons, {})
+  log_group_retention      = try(local.local_vars.log_group_retention, 7)
+  creator_admin_permissions = try(local.local_vars.creator_admin_permissions, true)
+  extra_tags               = local.tags
+}
+```
+
+## Quick Start
+
+1. Ensure this implementation repository is initialized for AWS and contains `versions.tf` and `.cloudopsworks/.provider`.
+2. Create and enter the Terragrunt deployment directory, then run `terragrunt scaffold github.com/cloudopsworks/terraform-module-aws-eks-setup`.
+3. Review `inputs.yaml`; at minimum, confirm the VPC dependency answers and set `cluster_version` plus node groups.
+4. Run `terragrunt init`, `terragrunt plan`, and `terragrunt apply` from the deployment directory.
+5. Pin production deployments to a release tag with `?ref=vX.Y.Z` after validating the desired release.
 
 
 ## Examples
 
-This module is designed to be used with Terragrunt for better infrastructure management. Below are different usage scenarios.
+## Basic managed node group
 
-### Scenario 1: Basic EKS Cluster with Managed Node Groups
-```hcl
-# terragrunt.hcl
-terraform {
-  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
-}
+Edit the generated `inputs.yaml` to set the Kubernetes version, private API access, and one managed node group:
 
-inputs = {
-  # Organization configuration
-  org = {
-    organization_name = "my-org"
-    organization_unit = "platform"
-    environment_type  = "dev"
-    environment_name  = "development"
-  }
+```yaml
+cluster_version: "1.30"
+private_api_server: true
+public_api_server: false
+access_cidrs: []
 
-  # VPC configuration (assumed to be created elsewhere)
-  vpc = {
-    vpc_id          = "vpc-12345"
-    private_subnets = ["subnet-priv1", "subnet-priv2"]
-  }
-
-  # Kubernetes version
-  cluster_version = "1.29"
-
-  # Managed node groups
-  node_groups = {
-    default = {
-      desired_size = 3
-      min_size     = 1
-      max_size     = 10
-      instance_types = ["t3.medium"]
-    }
-  }
-
-  # Add tags
-  extra_tags = {
-    Environment = "dev"
-    ManagedBy   = "terraform"
-  }
-}
+node_groups:
+  default:
+    desired_size: 3
+    min_size: 1
+    max_size: 6
+    instance_types: ["m6i.large"]
+    capacity_type: "ON_DEMAND"
+    labels:
+      workload: "general"
 ```
 
-### Scenario 2: EKS Cluster with Addons and IRSA
-```hcl
-# terragrunt.hcl
-terraform {
-  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
-}
+## Add-ons with matching IRSA roles
 
-inputs = {
-  org = {
-    organization_name = "my-org"
-    organization_unit = "platform"
-    environment_type  = "prod"
-    environment_name  = "production"
-  }
+Enable optional add-ons and IRSA roles in `inputs.yaml` when workloads need AWS APIs through Kubernetes service
+accounts:
 
-  vpc = {
-    vpc_id          = "vpc-67890"
-    private_subnets = ["subnet-priv1", "subnet-priv2", "subnet-priv3"]
-  }
+```yaml
+addons:
+  efs:
+    enabled: true
+  cloudwatch:
+    enabled: true
+  pod_identity:
+    enabled: true
 
-  cluster_version = "1.30"
-  access_cidrs    = ["10.0.0.0/8", "172.16.0.0/12"]  # Allow access from VPC and pod CIDRs
-
-  # Addons for common AWS integrations
-  addons = {
-    vpc-cni = {
-      most_recent = true
-      resolve_conflicts_on_create = "OVERWRITE"
-    }
-    coredns = {
-      most_recent = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-  }
-
-  # IRSA roles for service accounts
-  irsa = {
-    roles = {
-      alb_controller = {
-        name                = "alb-controller-role"
-        description         = "Role for AWS Load Balancer Controller"
-        policy_arns         = ["arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"]
-        assume_role_action  = "sts:AssumeRoleWithWebIdentity"
-        service_account     = "aws-load-balancer-controller"
-        namespace           = "kube-system"
-      }
-    }
-  }
-
-  node_groups = {
-    general = {
-      desired_size  = 5
-      min_size      = 3
-      max_size      = 20
-      instance_types = ["m6i.large"]
-      disk_size      = 50
-    }
-  }
-
-  extra_tags = {
-    Environment = "prod"
-    Backup       = "daily"
-    Security     = "highly-confidential"
-  }
-}
+irsa:
+  lb:
+    enabled: true
+    namespace_service_accounts:
+      - "kube-system:aws-load-balancer-controller"
+  efs_csi:
+    enabled: true
+    namespace_service_accounts:
+      - "kube-system:efs-csi-controller-sa"
+  cloudwatch:
+    enabled: true
+    namespace_service_accounts:
+      - "amazon-cloudwatch:cloudwatch-agent"
 ```
 
-### Scenario 3: EKS Cluster with Self-Managed Node Groups
-```hcl
-# terragrunt.hcl
-terraform {
-  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
-}
+## EKS access entries
 
-inputs = {
-  org = {
-    organization_name = "my-org"
-    organization_unit = "platform"
-    environment_type  = "staging"
-    environment_name  = "staging"
-  }
+Prefer `access_entries` for new clusters. `map_users` remains available only for deprecated aws-auth style
+migrations.
 
-  vpc = {
-    vpc_id          = "vpc-54321"
-    private_subnets = ["subnet-priv1", "subnet-priv2"]
-  }
+```yaml
+creator_admin_permissions: true
 
-  cluster_version = "1.28"
-  public_api_server = true  # Enable public access for staging
-
-  # Self-managed node groups for custom AMIs or configurations
-  self_node_groups = {
-    custom = {
-      desired_capacity     = 4
-      min_size            = 2
-      max_size            = 15
-      instance_type       = "m6i.xlarge"
-      key_name            = "my-keypair"
-      disk_size           = 100
-      volume_type         = "gp3"
-    }
-  }
-
-  access_entries = {
-    admin_user = {
-      principal_arn = "arn:aws:iam::123456789012:user/admin"
-      type         = "STANDARD"
-      policy_arns  = [
-        "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-      ]
-    }
-  }
-
-  extra_tags = {
-    Environment = "staging"
-    CostCenter  = "engineering"
-  }
-}
+access_entries:
+  platform_admin:
+    principal_arn: "arn:aws:iam::123456789012:role/platform-admin"
+    type: "STANDARD"
+    policy_associations:
+      cluster_admin:
+        policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        access_scope:
+          type: "cluster"
 ```
-
-### Scenario 4: Hub-and-Spoke Architecture Setup
-```hcl
-# terragrunt.hcl for hub cluster
-terraform {
-  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
-}
-
-inputs = {
-  is_hub = true  # This is the hub cluster
-
-  org = {
-    organization_name = "my-org"
-    organization_unit = "platform"
-    environment_type  = "hub"
-    environment_name  = "hub"
-  }
-
-  vpc = {
-    vpc_id          = "vpc-hub01"
-    private_subnets = ["subnet-priv1", "subnet-priv2"]
-  }
-
-  cluster_version = "1.29"
-
-  node_groups = {
-    hub_nodes = {
-      desired_size  = 3
-      min_size      = 3
-      max_size      = 3
-      instance_types = ["t3.large"]
-    }
-  }
-
-  # Central logging and monitoring addons
-  addons = {
-    vpc-cni = {
-      most_recent = true
-    }
-    coredns = {
-      most_recent = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-  }
-}
-```
-
-### Scenario 5: Multi-Zone EKS Cluster with Spot Instances
-```hcl
-# terragrunt.hcl
-terraform {
-  source = "git::https://github.com/cloudopsworks/terraform-module-aws-eks-setup.git"
-}
-
-inputs = {
-  org = {
-    organization_name = "my-org"
-    organization_unit = "platform"
-    environment_type  = "dev"
-    environment_name  = "development"
-  }
-
-  vpc = {
-    vpc_id          = "vpc-99999"
-    private_subnets = ["subnet-az1", "subnet-az2", "subnet-az3"]  # Multi-AZ subnets
-  }
-
-  cluster_version = "1.30"
-  access_cidrs    = ["0.0.0.0/0"]  # Public access with restricted CIDRs in production
-
-  node_groups = {
-    on_demand = {
-      desired_size  = 2
-      min_size      = 1
-      max_size      = 10
-      instance_types = ["m6i.large"]
-      capacity_type  = "ON_DEMAND"
-      subnet_ids     = local.vpc.private_subnets  # Can specify specific subnets per node group
-    }
-    spot = {
-      desired_size  = 5
-      min_size      = 0
-      max_size      = 50
-      instance_types = ["m5.large", "m5a.large", "m6a.large"]
-      capacity_type  = "SPOT"
-      disk_size      = 40
-    }
-  }
-
-  log_group_retention = 30  # Keep logs longer for troubleshooting
-
-  extra_tags = {
-    Environment = "dev"
-    CostOptimization = "enabled"
-    SpotUsage = "enabled"
-  }
-}
 
 
 
@@ -496,28 +526,28 @@ Available targets:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_cidrs"></a> [access\_cidrs](#input\_access\_cidrs) | CIDR list to allow access to EKS cluster | `list(string)` | `[]` | no |
-| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Additional IAM users to add IAM access Entries, aws-auth is deprecated. | `any` | `{}` | no |
-| <a name="input_addons"></a> [addons](#input\_addons) | EKS Addons | `any` | `{}` | no |
-| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes Version for EKS setup/upgrade | `string` | `"1.20"` | no |
-| <a name="input_creator_admin_permissions"></a> [creator\_admin\_permissions](#input\_creator\_admin\_permissions) | Enable admin permissions for cluster creator | `bool` | `true` | no |
-| <a name="input_extend_node_user_data"></a> [extend\_node\_user\_data](#input\_extend\_node\_user\_data) | n/a | `string` | `""` | no |
+| <a name="input_access_cidrs"></a> [access\_cidrs](#input\_access\_cidrs) | CIDR list allowed to access the public EKS API endpoint. | `list(string)` | `[]` | no |
+| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Additional EKS access entries keyed by logical name. | `any` | `{}` | no |
+| <a name="input_addons"></a> [addons](#input\_addons) | Optional EKS addon toggles layered on top of the base coredns, kube-proxy, vpc-cni, and ebs-csi addons. | `any` | `{}` | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version for EKS setup or upgrade. | `string` | `"1.20"` | no |
+| <a name="input_creator_admin_permissions"></a> [creator\_admin\_permissions](#input\_creator\_admin\_permissions) | Grant the Terraform caller cluster administrator access through an EKS access entry. | `bool` | `true` | no |
+| <a name="input_extend_node_user_data"></a> [extend\_node\_user\_data](#input\_extend\_node\_user\_data) | Extra user-data snippet reserved for node bootstrap customizations. | `string` | `""` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
-| <a name="input_irsa"></a> [irsa](#input\_irsa) | IRSA configuration settings | `any` | `{}` | no |
+| <a name="input_irsa"></a> [irsa](#input\_irsa) | IRSA configuration settings for supported EKS controllers and CSI drivers. | `any` | `{}` | no |
 | <a name="input_is_hub"></a> [is\_hub](#input\_is\_hub) | Establish this is a HUB or spoke configuration | `bool` | `false` | no |
-| <a name="input_log_group_retention"></a> [log\_group\_retention](#input\_log\_group\_retention) | Retention period for CloudWatch log groups in days | `number` | `7` | no |
-| <a name="input_map_users"></a> [map\_users](#input\_map\_users) | Additional IAM users to add IAM access Entries, aws-auth is deprecated. | `any` | `[]` | no |
-| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Managed worker group list for EKS terraform module. | `any` | `{}` | no |
-| <a name="input_node_volume_size"></a> [node\_volume\_size](#input\_node\_volume\_size) | Default Pools Node Disk Size, in GB | `number` | `30` | no |
-| <a name="input_node_volume_type"></a> [node\_volume\_type](#input\_node\_volume\_type) | Default Pools Node Disk Type, gp2 \| gp3 \| io1 \| sc1 \| st1 | `string` | `"gp2"` | no |
+| <a name="input_log_group_retention"></a> [log\_group\_retention](#input\_log\_group\_retention) | CloudWatch log group retention period in days for EKS control-plane logs. | `number` | `7` | no |
+| <a name="input_map_users"></a> [map\_users](#input\_map\_users) | DEPRECATED. Additional IAM users converted to EKS access entries; aws-auth is deprecated. | `any` | `[]` | no |
+| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Managed worker group map for the upstream EKS Terraform module. | `any` | `{}` | no |
+| <a name="input_node_volume_size"></a> [node\_volume\_size](#input\_node\_volume\_size) | Default root EBS volume size, in GB, for node groups. | `number` | `30` | no |
+| <a name="input_node_volume_type"></a> [node\_volume\_type](#input\_node\_volume\_type) | Default root EBS volume type for node groups. | `string` | `"gp3"` | no |
 | <a name="input_org"></a> [org](#input\_org) | n/a | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
-| <a name="input_policy_iam_users"></a> [policy\_iam\_users](#input\_policy\_iam\_users) | IAM User lists to apply to policies | `list(string)` | `[]` | no |
-| <a name="input_private_api_server"></a> [private\_api\_server](#input\_private\_api\_server) | Private API server access | `bool` | `true` | no |
-| <a name="input_public_api_server"></a> [public\_api\_server](#input\_public\_api\_server) | Public API server access | `bool` | `false` | no |
-| <a name="input_role_name_compat"></a> [role\_name\_compat](#input\_role\_name\_compat) | Role Name Compatibility | `bool` | `false` | no |
-| <a name="input_self_node_groups"></a> [self\_node\_groups](#input\_self\_node\_groups) | Worker group list for EKS terraform module. | `any` | `{}` | no |
+| <a name="input_policy_iam_users"></a> [policy\_iam\_users](#input\_policy\_iam\_users) | IAM principal ARN list to add as KMS key administrators. | `list(string)` | `[]` | no |
+| <a name="input_private_api_server"></a> [private\_api\_server](#input\_private\_api\_server) | Enable private access to the EKS API server endpoint. | `bool` | `true` | no |
+| <a name="input_public_api_server"></a> [public\_api\_server](#input\_public\_api\_server) | Enable public access to the EKS API server endpoint. | `bool` | `false` | no |
+| <a name="input_role_name_compat"></a> [role\_name\_compat](#input\_role\_name\_compat) | Use legacy control-plane IAM role naming for compatibility. | `bool` | `false` | no |
+| <a name="input_self_node_groups"></a> [self\_node\_groups](#input\_self\_node\_groups) | Self-managed worker group map for the upstream EKS Terraform module. | `any` | `{}` | no |
 | <a name="input_spoke_def"></a> [spoke\_def](#input\_spoke\_def) | n/a | `string` | `"001"` | no |
-| <a name="input_vpc"></a> [vpc](#input\_vpc) | VPC configuration entry | `any` | n/a | yes |
+| <a name="input_vpc"></a> [vpc](#input\_vpc) | VPC configuration entry. Requires vpc\_id, private\_subnets, ssh\_admin\_security\_group\_id, and optional local\_network\_cidrs/vpn\_accesses. | `any` | n/a | yes |
 
 ## Outputs
 
