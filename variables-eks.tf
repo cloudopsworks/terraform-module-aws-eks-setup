@@ -86,7 +86,7 @@ variable "node_volume_size" {
 variable "node_volume_type" {
   description = "Default Pools Node Disk Type, gp2 | gp3 | io1 | sc1 | st1"
   type        = string
-  default     = "gp2"
+  default     = "gp3"
 }
 
 variable "role_name_compat" {
