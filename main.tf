@@ -112,6 +112,7 @@ module "this" {
   name                = local.cluster_name
   subnet_ids          = var.vpc.private_subnets
   kubernetes_version  = var.cluster_version
+  deletion_protection = var.deletion_protection
   authentication_mode = "API_AND_CONFIG_MAP"
 
   enable_cluster_creator_admin_permissions = var.creator_admin_permissions

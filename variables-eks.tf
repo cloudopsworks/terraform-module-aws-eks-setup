@@ -103,6 +103,13 @@ variable "cluster_version" {
   default     = "1.20"
 }
 
+# deletion_protection: null # (Optional) Enable EKS cluster deletion protection. When true, the cluster cannot be deleted until protection is disabled. Valid values: true, false, null. Default: null.
+variable "deletion_protection" {
+  description = "Enable EKS cluster deletion protection. When enabled, the cluster cannot be deleted unless deletion protection is first disabled."
+  type        = bool
+  default     = null
+}
+
 # policy_iam_users: [] # (Optional) IAM principal ARNs granted KMS key administration permissions. Default: [].
 variable "policy_iam_users" {
   description = "IAM principal ARN list to add as KMS key administrators."
