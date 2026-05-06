@@ -8,6 +8,7 @@ vpc:
   vpn_accesses: []                    # (Optional) Workstation or VPN CIDR blocks allowed to reach the API endpoint. When vpc_enabled=true this is populated from the VPC dependency. Default: [].
 
 cluster_version: "1.20"              # (Optional) Kubernetes version for EKS setup or upgrade. Default: "1.20".
+deletion_protection: null             # (Optional) Enable EKS cluster deletion protection. Valid values: true, false, null. Default: null.
 access_cidrs: []                      # (Optional) CIDR list allowed to access the public EKS API endpoint. Default: [].
 public_api_server: false              # (Optional) Enable public access to the EKS API server endpoint. Default: false.
 private_api_server: true              # (Optional) Enable private access to the EKS API server endpoint. Default: true.

@@ -77,6 +77,7 @@ usage: |-
     vpn_accesses: []                    # (Optional) Workstation or VPN CIDR blocks allowed to reach the API endpoint. When vpc_enabled=true this is populated from the VPC dependency. Default: [].
 
   cluster_version: "1.20"              # (Optional) Kubernetes version for EKS setup or upgrade. Default: "1.20".
+  deletion_protection: null             # (Optional) Enable EKS cluster deletion protection. Valid values: true, false, null. Default: null.
   access_cidrs: []                      # (Optional) CIDR list allowed to access the public EKS API endpoint. Default: [].
   public_api_server: false              # (Optional) Enable public access to the EKS API server endpoint. Default: false.
   private_api_server: true              # (Optional) Enable private access to the EKS API server endpoint. Default: true.
@@ -294,6 +295,7 @@ usage: |-
     node_groups              = try(local.local_vars.node_groups, {})
     self_node_groups         = try(local.local_vars.self_node_groups, {})
     cluster_version          = try(local.local_vars.cluster_version, "1.20")
+    deletion_protection      = try(local.local_vars.deletion_protection, null)
     policy_iam_users         = try(local.local_vars.policy_iam_users, [])
     access_cidrs             = try(local.local_vars.access_cidrs, [])
     irsa                     = try(local.local_vars.irsa, local.local_vars.irsa_configuration, {})

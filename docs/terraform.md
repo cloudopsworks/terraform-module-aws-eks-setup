@@ -14,9 +14,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.20 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.22.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.6.1 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
 
 ## Modules
 
@@ -100,6 +100,7 @@
 | <a name="input_addons"></a> [addons](#input\_addons) | Optional EKS addon toggles layered on top of the base coredns, kube-proxy, vpc-cni, and ebs-csi addons. | `any` | `{}` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version for EKS setup or upgrade. | `string` | `"1.20"` | no |
 | <a name="input_creator_admin_permissions"></a> [creator\_admin\_permissions](#input\_creator\_admin\_permissions) | Grant the Terraform caller cluster administrator access through an EKS access entry. | `bool` | `true` | no |
+| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Enable EKS cluster deletion protection. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. | `bool` | `null` | no |
 | <a name="input_extend_node_user_data"></a> [extend\_node\_user\_data](#input\_extend\_node\_user\_data) | Extra user-data snippet reserved for node bootstrap customizations. | `string` | `""` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
 | <a name="input_irsa"></a> [irsa](#input\_irsa) | IRSA configuration settings for supported EKS controllers and CSI drivers. | `any` | `{}` | no |

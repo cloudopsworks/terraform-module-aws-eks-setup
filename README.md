@@ -103,6 +103,7 @@ vpc:
   vpn_accesses: []                    # (Optional) Workstation or VPN CIDR blocks allowed to reach the API endpoint. When vpc_enabled=true this is populated from the VPC dependency. Default: [].
 
 cluster_version: "1.20"              # (Optional) Kubernetes version for EKS setup or upgrade. Default: "1.20".
+deletion_protection: null             # (Optional) Enable EKS cluster deletion protection. Valid values: true, false, null. Default: null.
 access_cidrs: []                      # (Optional) CIDR list allowed to access the public EKS API endpoint. Default: [].
 public_api_server: false              # (Optional) Enable public access to the EKS API server endpoint. Default: false.
 private_api_server: true              # (Optional) Enable private access to the EKS API server endpoint. Default: true.
@@ -320,6 +321,7 @@ inputs = {
   node_groups              = try(local.local_vars.node_groups, {})
   self_node_groups         = try(local.local_vars.self_node_groups, {})
   cluster_version          = try(local.local_vars.cluster_version, "1.20")
+  deletion_protection      = try(local.local_vars.deletion_protection, null)
   policy_iam_users         = try(local.local_vars.policy_iam_users, [])
   access_cidrs             = try(local.local_vars.access_cidrs, [])
   irsa                     = try(local.local_vars.irsa, local.local_vars.irsa_configuration, {})
@@ -445,9 +447,9 @@ Available targets:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.20 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.22.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.6.1 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
 
 ## Modules
 
@@ -531,6 +533,7 @@ Available targets:
 | <a name="input_addons"></a> [addons](#input\_addons) | Optional EKS addon toggles layered on top of the base coredns, kube-proxy, vpc-cni, and ebs-csi addons. | `any` | `{}` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version for EKS setup or upgrade. | `string` | `"1.20"` | no |
 | <a name="input_creator_admin_permissions"></a> [creator\_admin\_permissions](#input\_creator\_admin\_permissions) | Grant the Terraform caller cluster administrator access through an EKS access entry. | `bool` | `true` | no |
+| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Enable EKS cluster deletion protection. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. | `bool` | `null` | no |
 | <a name="input_extend_node_user_data"></a> [extend\_node\_user\_data](#input\_extend\_node\_user\_data) | Extra user-data snippet reserved for node bootstrap customizations. | `string` | `""` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
 | <a name="input_irsa"></a> [irsa](#input\_irsa) | IRSA configuration settings for supported EKS controllers and CSI drivers. | `any` | `{}` | no |
