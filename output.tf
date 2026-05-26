@@ -1,5 +1,5 @@
 ##
-# (c) 2021-2025
+# (c) 2021-2026
 #     Cloud Ops Works LLC - https://cloudops.works/
 #     Find us on:
 #       GitHub: https://github.com/cloudopsworks
@@ -62,6 +62,14 @@ output "cluster_sg_worker" {
   value = {
     name = aws_security_group.worker.name
     id   = aws_security_group.worker.id
+  }
+}
+
+output "gateway_irsa_role" {
+  description = "AWS Gateway API Controller IRSA role ARN and name"
+  value = {
+    arn  = module.gateway_irsa_role.arn
+    name = module.gateway_irsa_role.name
   }
 }
 
