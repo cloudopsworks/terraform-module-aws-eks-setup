@@ -62,6 +62,24 @@ module "lb_irsa_role" {
   tags     = local.all_tags
 }
 
+module "gateway_irsa_role" {
+  source                               = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version                              = "~> 6.2"
+  create                               = try(var.irsa.gateway.enabled, false)
+  name                                 = "eks-${local.system_name}-gw-api-role"
+  policy_name                          = "eks-${local.system_name}-gw-api-role-pol"
+  use_name_prefix                      = false
+  attach_aws_gateway_controller_policy = true
+  oidc_providers = {
+    main = {
+      provider_arn               = module.this.oidc_provider_arn
+      namespace_service_accounts = try(var.irsa.gateway.namespace_service_accounts, [])
+    }
+  }
+  policies = try(var.irsa.gateway.role_policy_arns, {})
+  tags     = local.all_tags
+}
+
 module "ebs_csi_irsa_role" {
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version               = "~> 6.2"
