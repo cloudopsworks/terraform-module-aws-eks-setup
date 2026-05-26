@@ -578,6 +578,7 @@ Available targets:
 | <a name="output_efs_csi_irsa_role"></a> [efs\_csi\_irsa\_role](#output\_efs\_csi\_irsa\_role) | n/a |
 | <a name="output_eks_worker_key"></a> [eks\_worker\_key](#output\_eks\_worker\_key) | n/a |
 | <a name="output_ext_dns_irsa_role"></a> [ext\_dns\_irsa\_role](#output\_ext\_dns\_irsa\_role) | n/a |
+| <a name="output_gateway_irsa_role"></a> [gateway\_irsa\_role](#output\_gateway\_irsa\_role) | AWS Gateway API Controller IRSA role ARN and name |
 | <a name="output_keda_irsa_role"></a> [keda\_irsa\_role](#output\_keda\_irsa\_role) | n/a |
 | <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | n/a |
 | <a name="output_kms_key_id"></a> [kms\_key\_id](#output\_kms\_key\_id) | n/a |
