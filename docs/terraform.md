@@ -14,9 +14,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.20 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.22.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.6.1 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
 
 ## Modules
 
@@ -29,6 +29,7 @@
 | <a name="module_ebs_csi_irsa_role"></a> [ebs\_csi\_irsa\_role](#module\_ebs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_efs_csi_irsa_role"></a> [efs\_csi\_irsa\_role](#module\_efs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_ext_dns_irsa_role"></a> [ext\_dns\_irsa\_role](#module\_ext\_dns\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
+| <a name="module_gateway_irsa_role"></a> [gateway\_irsa\_role](#module\_gateway\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_keda_irsa_role"></a> [keda\_irsa\_role](#module\_keda\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_lb_irsa_role"></a> [lb\_irsa\_role](#module\_lb\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_prometheus_irsa_role"></a> [prometheus\_irsa\_role](#module\_prometheus\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |

@@ -133,6 +133,10 @@ variable "access_cidrs" {
 #     enabled: false                    # (Optional) Create/use the load balancer controller IRSA role. Default: false.
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
 #     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+#   gateway:                            # (Optional) AWS Gateway API Controller IRSA role configuration. Default: disabled.
+#     enabled: false                    # (Optional) Create/use the AWS Gateway API controller IRSA role. Default: false.
+#     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+#     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
 #   ebs_csi:                            # (Optional) AWS EBS CSI driver IRSA role configuration. Default: disabled.
 #     enabled: false                    # (Optional) Create/use the EBS CSI IRSA role. Default: false.
 #     kms_cmk_ids: []                   # (Optional) Additional KMS CMK ARNs allowed by the EBS CSI policy. Default: [].

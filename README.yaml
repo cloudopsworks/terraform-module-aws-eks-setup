@@ -164,6 +164,10 @@ usage: |-
       enabled: false                    # (Optional) Create/use the AWS Load Balancer Controller IRSA role. Default: false.
       namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
       role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+    gateway:
+      enabled: false                    # (Optional) Create/use the AWS Gateway API Controller IRSA role. Default: false.
+      namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+      role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
     ebs_csi:
       enabled: false                    # (Optional) Create/use the AWS EBS CSI driver IRSA role. Default: false.
       kms_cmk_ids: []                   # (Optional) Additional KMS CMK ARNs allowed by the EBS CSI policy. Default: [].
