@@ -1,5 +1,5 @@
 ##
-# (c) 2021-2025
+# (c) 2021-2026
 #     Cloud Ops Works LLC - https://cloudops.works/
 #     Find us on:
 #       GitHub: https://github.com/cloudopsworks
@@ -8,12 +8,12 @@
 #
 
 terraform {
-  required_version = ">= 1.3"
+  required_version = ">= 1.5.7"
   # Complete with required providers for the module
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.20"
+      version = ">= 6.42, < 7.0"
     }
     cloudinit = {
       source  = "hashicorp/cloudinit"
