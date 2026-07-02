@@ -269,3 +269,13 @@ variable "creator_admin_permissions" {
   default     = true
   nullable    = false
 }
+
+# node_metadata: {}                     # (Optional) IMDS metadata_options override for EKS managed node groups. Default: {}.
+#   hop_limit: 2                        # (Optional) http_put_response_hop_limit for IMDS requests. Default: 2.
+#   http_tokens: "required"             # (Optional) IMDS token requirement. Valid values: optional, required. Default: "required".
+#   http_endpoint: "enabled"            # (Optional) IMDS HTTP endpoint state. Valid values: enabled, disabled. Default: "enabled".
+variable "node_metadata" {
+  description = "IMDS metadata_options override (hop_limit, http_tokens, http_endpoint) applied to EKS managed node groups."
+  type        = any
+  default     = {}
+}
