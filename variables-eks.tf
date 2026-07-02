@@ -278,4 +278,5 @@ variable "node_metadata" {
   description = "IMDS metadata_options override (hop_limit, http_tokens, http_endpoint) applied to EKS managed node groups."
   type        = any
   default     = {}
+  nullable    = false
 }
