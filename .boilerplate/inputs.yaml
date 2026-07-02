@@ -20,6 +20,12 @@ extend_node_user_data: ""            # (Optional) Extra user-data snippet reserv
 node_volume_size: 30                  # (Optional) Default root EBS volume size, in GB, for node groups. Default: 30.
 node_volume_type: "gp3"              # (Optional) Default root EBS volume type for node groups. Valid values include gp2, gp3, io1, io2, sc1, st1. Default: "gp3".
 
+node_metadata: {}                     # (Optional) IMDS metadata_options override for EKS managed node groups. Default: {}.
+# node_metadata:
+#   hop_limit: 2                      # (Optional) http_put_response_hop_limit for IMDS requests. Default: 2.
+#   http_tokens: "required"           # (Optional) IMDS token requirement. Valid values: optional, required. Default: "required".
+#   http_endpoint: "enabled"          # (Optional) IMDS HTTP endpoint state. Valid values: enabled, disabled. Default: "enabled".
+
 node_groups: {}                       # (Optional) EKS managed node groups keyed by logical name. Default: {}.
 # node_groups:
 #   default:

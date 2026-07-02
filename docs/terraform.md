@@ -14,9 +14,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.42, < 7.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.51.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.9.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.3.0 |
 
 ## Modules
 
@@ -109,6 +109,7 @@
 | <a name="input_log_group_retention"></a> [log\_group\_retention](#input\_log\_group\_retention) | CloudWatch log group retention period in days for EKS control-plane logs. | `number` | `7` | no |
 | <a name="input_map_users"></a> [map\_users](#input\_map\_users) | DEPRECATED. Additional IAM users converted to EKS access entries; aws-auth is deprecated. | `any` | `[]` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Managed worker group map for the upstream EKS Terraform module. | `any` | `{}` | no |
+| <a name="input_node_metadata"></a> [node\_metadata](#input\_node\_metadata) | IMDS metadata\_options override (hop\_limit, http\_tokens, http\_endpoint) applied to EKS managed node groups. | `any` | `{}` | no |
 | <a name="input_node_volume_size"></a> [node\_volume\_size](#input\_node\_volume\_size) | Default root EBS volume size, in GB, for node groups. | `number` | `30` | no |
 | <a name="input_node_volume_type"></a> [node\_volume\_type](#input\_node\_volume\_type) | Default root EBS volume type for node groups. | `string` | `"gp3"` | no |
 | <a name="input_org"></a> [org](#input\_org) | Organization details | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |

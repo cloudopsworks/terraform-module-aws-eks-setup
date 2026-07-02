@@ -40,9 +40,9 @@ locals {
     }
 
     metadata_options = {
-      http_put_response_hop_limit = 2
-      http_tokens                 = "required"
-      http_endpoint               = "enabled"
+      http_put_response_hop_limit = try(var.node_metadata.hop_limit, 2)
+      http_tokens                 = try(var.node_metadata.http_tokens, "required")
+      http_endpoint               = try(var.node_metadata.http_endpoint, "enabled")
     }
 
     create_iam_role = false

@@ -115,6 +115,12 @@ extend_node_user_data: ""            # (Optional) Extra user-data snippet reserv
 node_volume_size: 30                  # (Optional) Default root EBS volume size, in GB, for node groups. Default: 30.
 node_volume_type: "gp3"              # (Optional) Default root EBS volume type for node groups. Valid values include gp2, gp3, io1, io2, sc1, st1. Default: "gp3".
 
+node_metadata: {}                     # (Optional) IMDS metadata_options override for EKS managed node groups. Default: {}.
+# node_metadata:
+#   hop_limit: 2                      # (Optional) http_put_response_hop_limit for IMDS requests. Default: 2.
+#   http_tokens: "required"           # (Optional) IMDS token requirement. Valid values: optional, required. Default: "required".
+#   http_endpoint: "enabled"          # (Optional) IMDS HTTP endpoint state. Valid values: enabled, disabled. Default: "enabled".
+
 node_groups: {}                       # (Optional) EKS managed node groups keyed by logical name. Default: {}.
 # node_groups:
 #   default:
@@ -337,6 +343,7 @@ inputs = {
   addons                   = try(local.local_vars.addons, {})
   log_group_retention      = try(local.local_vars.log_group_retention, 7)
   creator_admin_permissions = try(local.local_vars.creator_admin_permissions, true)
+  node_metadata             = try(local.local_vars.node_metadata, {})
   extra_tags               = local.tags
 }
 ```
@@ -451,9 +458,9 @@ Available targets:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.42, < 7.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.51.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.9.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.3.0 |
 
 ## Modules
 
@@ -546,6 +553,7 @@ Available targets:
 | <a name="input_log_group_retention"></a> [log\_group\_retention](#input\_log\_group\_retention) | CloudWatch log group retention period in days for EKS control-plane logs. | `number` | `7` | no |
 | <a name="input_map_users"></a> [map\_users](#input\_map\_users) | DEPRECATED. Additional IAM users converted to EKS access entries; aws-auth is deprecated. | `any` | `[]` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Managed worker group map for the upstream EKS Terraform module. | `any` | `{}` | no |
+| <a name="input_node_metadata"></a> [node\_metadata](#input\_node\_metadata) | IMDS metadata\_options override (hop\_limit, http\_tokens, http\_endpoint) applied to EKS managed node groups. | `any` | `{}` | no |
 | <a name="input_node_volume_size"></a> [node\_volume\_size](#input\_node\_volume\_size) | Default root EBS volume size, in GB, for node groups. | `number` | `30` | no |
 | <a name="input_node_volume_type"></a> [node\_volume\_type](#input\_node\_volume\_type) | Default root EBS volume type for node groups. | `string` | `"gp3"` | no |
 | <a name="input_org"></a> [org](#input\_org) | Organization details | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
