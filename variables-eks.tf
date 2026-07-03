@@ -151,12 +151,6 @@ variable "access_cidrs" {
 #     hosted_zone_arns: []              # (Optional) Route53 hosted zone ARNs managed by ExternalDNS. Default: [].
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
 #     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
-#   external_secrets:                   # (Optional) External Secrets Operator IRSA role configuration. Default: disabled.
-#     enabled: false                    # (Optional) Create/use the External Secrets Operator IRSA role. Default: false.
-#     ssm_parameter_arns: []            # (Optional) SSM parameter ARNs readable by the operator. Default: [].
-#     secrets_manager_arns: []          # (Optional) AWS Secrets Manager secret ARNs readable by the operator. Default: [].
-#     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
-#     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
 #   cluster_autoscaler:                 # (Optional) Cluster Autoscaler IRSA role configuration. Default: disabled.
 #     enabled: false                    # (Optional) Create/use the Cluster Autoscaler IRSA role. Default: false.
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
@@ -195,14 +189,15 @@ variable "access_cidrs" {
 #     kms_key_arns: []                  # (Optional) KMS key ARNs used by secrets or parameters. Default: [].
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
 #     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
-#   adot:                               # (Optional) AWS Distro for OpenTelemetry IRSA role configuration. Default: disabled.
+#   adot:                               # (Optional) AWS Distro for OpenTelemetry IRSA role configuration. Attaches the CloudWatch observability policy (CloudWatchAgentServer + X-Ray write). Default: disabled.
 #     enabled: false                    # (Optional) Create/use the ADOT IRSA role. Default: false.
+#     workspace_arns: []                # (Optional) AMP workspace ARNs for remote write; attaches the AMP remote-write policy when non-empty. Default: [].
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
 #     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
-#   keda:                               # (Optional) KEDA IRSA role configuration. Default: disabled.
+#   keda:                               # (Optional) KEDA IRSA role configuration. No policies attached by default. Default: disabled.
 #     enabled: false                    # (Optional) Create/use the KEDA IRSA role. Default: false.
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
-#     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+#     role_policy_arns: {}              # (Optional) IAM policy ARNs granting scaler permissions (e.g. CloudWatch/SQS read). Default: {}.
 variable "irsa" {
   description = "IRSA configuration settings for supported EKS controllers and CSI drivers."
   type        = any

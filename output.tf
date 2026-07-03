@@ -157,14 +157,6 @@ output "secrets_store_irsa_role" {
   }
 }
 
-output "external_secrets_irsa_role" {
-  description = "External Secrets Operator IRSA role ARN and name"
-  value = {
-    arn  = module.external_secrets_irsa_role.arn
-    name = module.external_secrets_irsa_role.name
-  }
-}
-
 output "cloudwatch_irsa_role" {
   value = {
     arn  = module.cloudwatch_irsa_role.arn
