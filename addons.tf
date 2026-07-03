@@ -58,6 +58,32 @@ locals {
       service_account_role_arn = try(var.irsa.adot.enabled, false) ? local.adot_irsa_role_arn : null
     }
   } : {}
-  cluster_addons = merge(local.basic_addons, local.efs_addon, local.snapshot_addon, local.cloudwatch_addon,
-  local.pod_identity_addon, local.adot_addon)
+  s3_addon = try(var.addons.s3.enabled, false) ? {
+    aws-mountpoint-s3-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.s3_csi.enabled, false) ? local.s3_csi_irsa_role_arn : null
+    }
+  } : {}
+  external_dns_addon = try(var.addons.external_dns.enabled, false) ? {
+    external-dns = {
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.external_dns.enabled, false) ? local.external_dns_irsa_role_arn : null
+    }
+  } : {}
+  cert_manager_addon = try(var.addons.cert_manager.enabled, false) ? {
+    cert-manager = {
+      most_recent              = true
+      service_account_role_arn = try(var.irsa.cert_manager.enabled, false) ? local.cert_manager_irsa_role_arn : null
+    }
+  } : {}
+  cluster_addons = merge(local.basic_addons,
+    local.efs_addon,
+    local.snapshot_addon,
+    local.cloudwatch_addon,
+    local.pod_identity_addon,
+    local.adot_addon,
+    local.s3_addon,
+    local.external_dns_addon,
+    local.cert_manager_addon
+  )
 }

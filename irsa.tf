@@ -8,21 +8,31 @@
 #
 
 locals {
-  policy_prefix                = "eks-${local.system_name_short}-"
-  vpc_cni_irsa_role_name       = "eks-${local.system_name}-vpc-cni-role"
-  vpc_cni_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
-  ebs_cni_irsa_role_name       = "eks-${local.system_name}-ebs-csi-role"
-  ebs_cni_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_cni_irsa_role_name}"
-  efs_cni_irsa_role_name       = "eks-${local.system_name}-efs-csi-role"
-  efs_cni_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.efs_cni_irsa_role_name}"
-  cloudwatch_irsa_role_name    = "eks-${local.system_name}-cw-observability-role"
-  cloudwatch_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.cloudwatch_irsa_role_name}"
-  secrets_store_irsa_role_name = "eks-${local.system_name}-secrets-store-role"
-  secrets_store_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.secrets_store_irsa_role_name}"
-  adot_irsa_role_name          = "eks-${local.system_name}-adot-role"
-  adot_irsa_role_arn           = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.adot_irsa_role_name}"
-  keda_irsa_role_name          = "eks-${local.system_name}-keda-role"
-  keda_irsa_role_arn           = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.keda_irsa_role_name}"
+  policy_prefix                   = "eks-${local.system_name_short}-"
+  vpc_cni_irsa_role_name          = "eks-${local.system_name}-vpc-cni-role"
+  vpc_cni_irsa_role_arn           = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.vpc_cni_irsa_role_name}"
+  ebs_cni_irsa_role_name          = "eks-${local.system_name}-ebs-csi-role"
+  ebs_cni_irsa_role_arn           = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_cni_irsa_role_name}"
+  efs_cni_irsa_role_name          = "eks-${local.system_name}-efs-csi-role"
+  efs_cni_irsa_role_arn           = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.efs_cni_irsa_role_name}"
+  cloudwatch_irsa_role_name       = "eks-${local.system_name}-cw-observability-role"
+  cloudwatch_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.cloudwatch_irsa_role_name}"
+  secrets_store_irsa_role_name    = "eks-${local.system_name}-secrets-store-role"
+  secrets_store_irsa_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.secrets_store_irsa_role_name}"
+  adot_irsa_role_name             = "eks-${local.system_name}-adot-role"
+  adot_irsa_role_arn              = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.adot_irsa_role_name}"
+  keda_irsa_role_name             = "eks-${local.system_name}-keda-role"
+  keda_irsa_role_arn              = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.keda_irsa_role_name}"
+  s3_csi_irsa_role_name           = "eks-${local.system_name}-s3-csi-role"
+  s3_csi_irsa_role_arn            = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.s3_csi_irsa_role_name}"
+  external_secrets_irsa_role_name = "eks-${local.system_name}-external-secrets-role"
+  external_secrets_irsa_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.external_secrets_irsa_role_name}"
+  external_dns_irsa_role_name     = "eks-${local.system_name}-ext-dns-role"
+  external_dns_irsa_role_arn      = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.external_dns_irsa_role_name}"
+  cert_manager_irsa_role_name     = "eks-${local.system_name}-cert-mgr-role"
+  cert_manager_irsa_role_arn      = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.cert_manager_irsa_role_name}"
+  prometheus_irsa_role_name       = "eks-${local.system_name}-prometheus-role"
+  prometheus_irsa_role_arn        = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prometheus_irsa_role_name}"
 }
 
 module "vpc_cni_irsa_role" {
@@ -121,8 +131,8 @@ module "ext_dns_irsa_role" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version                       = "~> 6.2"
   create                        = try(var.irsa.external_dns.enabled, false)
-  name                          = "eks-${local.system_name}-ext-dns-role"
-  policy_name                   = "eks-${local.system_name}-ext-dns-role-pol"
+  name                          = local.external_dns_irsa_role_name
+  policy_name                   = "${local.external_dns_irsa_role_name}-pol"
   use_name_prefix               = false
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = try(var.irsa.external_dns.hosted_zone_arns, [])
@@ -159,8 +169,8 @@ module "cert_mgr_irsa_role" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version                       = "~> 6.2"
   create                        = try(var.irsa.cert_manager.enabled, false)
-  name                          = "eks-${local.system_name}-cert-mgr-role"
-  policy_name                   = "eks-${local.system_name}-cert-mgr-role-pol"
+  name                          = local.cert_manager_irsa_role_name
+  policy_name                   = "${local.cert_manager_irsa_role_name}-pol"
   use_name_prefix               = false
   attach_cert_manager_policy    = true
   cert_manager_hosted_zone_arns = try(var.irsa.cert_manager.hosted_zone_arns, [])
@@ -178,8 +188,8 @@ module "s3_csi_irsa_role" {
   source                          = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version                         = "~> 6.2"
   create                          = try(var.irsa.s3_csi.enabled, false)
-  name                            = "eks-${local.system_name}-s3-csi-role"
-  policy_name                     = "eks-${local.system_name}-s3-csi-role-pol"
+  name                            = local.s3_csi_irsa_role_name
+  policy_name                     = "${local.s3_csi_irsa_role_name}-pol"
   use_name_prefix                 = false
   attach_mountpoint_s3_csi_policy = true
   mountpoint_s3_csi_bucket_arns   = try(var.irsa.s3_csi.bucket_arns, [])
@@ -218,8 +228,8 @@ module "prometheus_irsa_role" {
   source                                           = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version                                          = "~> 6.2"
   create                                           = try(var.irsa.prometheus.enabled, false)
-  name                                             = "eks-${local.system_name}-prometheus-role"
-  policy_name                                      = "eks-${local.system_name}-prometheus-role-pol"
+  name                                             = local.prometheus_irsa_role_name
+  policy_name                                      = "${local.prometheus_irsa_role_name}-pol"
   use_name_prefix                                  = false
   attach_amazon_managed_service_prometheus_policy  = true
   amazon_managed_service_prometheus_workspace_arns = try(var.irsa.prometheus.workspace_arns, [])
@@ -310,3 +320,24 @@ module "keda_irsa_role" {
   policies = try(var.irsa.keda.role_policy_arns, {})
   tags     = local.all_tags
 }
+
+module "external_secrets_irsa_role" {
+  source                                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version                               = "~> 6.2"
+  create                                = try(var.irsa.external_secrets.enabled, false)
+  name                                  = local.external_secrets_irsa_role_name
+  policy_name                           = "${local.external_secrets_irsa_role_name}-pol"
+  use_name_prefix                       = false
+  attach_external_secrets_policy        = true
+  external_secrets_ssm_parameter_arns   = try(var.irsa.external_secrets.ssm_parameter_arns, [])
+  external_secrets_secrets_manager_arns = try(var.irsa.external_secrets.secrets_manager_arns, [])
+  oidc_providers = {
+    main = {
+      provider_arn               = module.this.oidc_provider_arn
+      namespace_service_accounts = try(var.irsa.external_secrets.namespace_service_accounts, [])
+    }
+  }
+  policies = try(var.irsa.external_secrets.role_policy_arns, {})
+  tags     = local.all_tags
+}
+
