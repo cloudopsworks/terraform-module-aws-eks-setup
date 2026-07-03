@@ -151,6 +151,12 @@ variable "access_cidrs" {
 #     hosted_zone_arns: []              # (Optional) Route53 hosted zone ARNs managed by ExternalDNS. Default: [].
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
 #     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
+#   external_secrets:                   # (Optional) External Secrets Operator IRSA role configuration. Default: disabled.
+#     enabled: false                    # (Optional) Create/use the External Secrets Operator IRSA role. Default: false.
+#     ssm_parameter_arns: []            # (Optional) SSM parameter ARNs readable by the operator. Default: [].
+#     secrets_manager_arns: []          # (Optional) AWS Secrets Manager secret ARNs readable by the operator. Default: [].
+#     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
+#     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
 #   cluster_autoscaler:                 # (Optional) Cluster Autoscaler IRSA role configuration. Default: disabled.
 #     enabled: false                    # (Optional) Create/use the Cluster Autoscaler IRSA role. Default: false.
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
@@ -249,6 +255,12 @@ variable "role_name_compat" {
 #     enabled: false                  # (Optional) Enable eks-pod-identity-agent addon. Default: false.
 #   adot:
 #     enabled: false                  # (Optional) Enable AWS Distro for OpenTelemetry addon. Default: false.
+#   s3:
+#     enabled: false                  # (Optional) Enable aws-mountpoint-s3-csi-driver addon. Default: false.
+#   external_dns:
+#     enabled: false                  # (Optional) Enable external-dns community addon. Default: false.
+#   cert_manager:
+#     enabled: false                  # (Optional) Enable cert-manager community addon. Default: false.
 variable "addons" {
   description = "Optional EKS addon toggles layered on top of the base coredns, kube-proxy, vpc-cni, and ebs-csi addons."
   type        = any
