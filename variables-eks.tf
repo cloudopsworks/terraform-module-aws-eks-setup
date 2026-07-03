@@ -194,10 +194,19 @@ variable "access_cidrs" {
 #     workspace_arns: []                # (Optional) AMP workspace ARNs for remote write; attaches the AMP remote-write policy when non-empty. Default: [].
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
 #     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
-#   keda:                               # (Optional) KEDA IRSA role configuration. No policies attached by default. Default: disabled.
+#   keda:                               # (Optional) KEDA IRSA role configuration. Scaler policies are attached only for the scaler blocks enabled below. Default: disabled.
 #     enabled: false                    # (Optional) Create/use the KEDA IRSA role. Default: false.
+#     sqs:                              # (Optional) SQS scaler read permissions. Default: disabled.
+#       enabled: false                  # (Optional) Attach the SQS scaler policy. Default: false.
+#       queue_arns: []                  # (Required when enabled) SQS queue ARNs readable by KEDA. Default: [].
+#     dynamodb:                         # (Optional) DynamoDB scaler read permissions. Default: disabled.
+#       enabled: false                  # (Optional) Attach the DynamoDB scaler policy. Default: false.
+#       table_arns: []                  # (Required when enabled) DynamoDB table/stream ARNs readable by KEDA. Default: [].
+#     cloudwatch:                       # (Optional) CloudWatch scaler read permissions. Default: disabled.
+#       enabled: false                  # (Optional) Attach the CloudWatch scaler policy. Default: false.
+#       arns: ["*"]                     # (Optional) Resource ARNs; metric read APIs only support "*", DescribeAlarms honors alarm ARNs. Default: ["*"].
 #     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
-#     role_policy_arns: {}              # (Optional) IAM policy ARNs granting scaler permissions (e.g. CloudWatch/SQS read). Default: {}.
+#     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs for additional scalers. Default: {}.
 variable "irsa" {
   description = "IRSA configuration settings for supported EKS controllers and CSI drivers."
   type        = any
