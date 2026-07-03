@@ -264,9 +264,18 @@ irsa:
     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
     role_policy_arns: {}              # (Optional) Extra IAM policy ARNs. Default: {}.
   keda:
-    enabled: false                    # (Optional) Create/use the KEDA IRSA role. No policies attached by default. Default: false.
+    enabled: false                    # (Optional) Create/use the KEDA IRSA role. Scaler policies are attached only for the scaler blocks enabled below. Default: false.
+    sqs:
+      enabled: false                  # (Optional) Attach the SQS scaler read policy. Default: false.
+      queue_arns: []                  # (Required when enabled) SQS queue ARNs readable by KEDA. Default: [].
+    dynamodb:
+      enabled: false                  # (Optional) Attach the DynamoDB scaler read policy. Default: false.
+      table_arns: []                  # (Required when enabled) DynamoDB table/stream ARNs readable by KEDA. Default: [].
+    cloudwatch:
+      enabled: false                  # (Optional) Attach the CloudWatch scaler read policy. Default: false.
+      arns: ["*"]                     # (Optional) Resource ARNs; metric read APIs only support "*", DescribeAlarms honors alarm ARNs. Default: ["*"].
     namespace_service_accounts: []    # (Optional) namespace:service_account bindings. Default: [].
-    role_policy_arns: {}              # (Optional) IAM policy ARNs granting scaler permissions (e.g. CloudWatch/SQS read). Default: {}.
+    role_policy_arns: {}              # (Optional) Extra IAM policy ARNs for additional scalers. Default: {}.
 ```
 
 ## Generated `terragrunt.hcl`
@@ -465,9 +474,9 @@ Available targets:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.42, < 7.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.53.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.9.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.3.0 |
 
 ## Modules
 

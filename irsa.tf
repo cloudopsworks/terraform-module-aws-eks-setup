@@ -307,8 +307,8 @@ module "adot_irsa_role" {
 }
 
 data "aws_iam_policy_document" "keda_policy_document_sqs" {
-  count = try(var.irsa.keda.enabled, false) && try(var.irsa.keda.sqs.enabled) ? 1 : 0
-  # KEDA SQS SCALER POlICY DOCUMENT
+  count = try(var.irsa.keda.enabled, false) && try(var.irsa.keda.sqs.enabled, false) ? 1 : 0
+  # KEDA SQS SCALER POLICY DOCUMENT
   statement {
     sid    = "KedaSQSPolicy"
     effect = "Allow"
@@ -323,8 +323,8 @@ data "aws_iam_policy_document" "keda_policy_document_sqs" {
 }
 
 data "aws_iam_policy_document" "keda_policy_document_dynamodb" {
-  count = try(var.irsa.keda.enabled, false) && try(var.irsa.keda.dynamodb.enabled) ? 1 : 0
-  # KEDA DYNAMODB SCALER POLICY DOCUMENT}
+  count = try(var.irsa.keda.enabled, false) && try(var.irsa.keda.dynamodb.enabled, false) ? 1 : 0
+  # KEDA DYNAMODB SCALER POLICY DOCUMENT
   statement {
     sid    = "KedaDynamoDBPolicy"
     effect = "Allow"
@@ -338,7 +338,7 @@ data "aws_iam_policy_document" "keda_policy_document_dynamodb" {
 }
 
 data "aws_iam_policy_document" "keda_policy_document_cw" {
-  count = try(var.irsa.keda.enabled, false) && try(var.irsa.keda.cloudwatch.enabled) ? 1 : 0
+  count = try(var.irsa.keda.enabled, false) && try(var.irsa.keda.cloudwatch.enabled, false) ? 1 : 0
   # KEDA CLOUDWATCH SCALER POLICY DOCUMENT
   statement {
     sid    = "KedaCloudWatchPolicy"
@@ -349,7 +349,9 @@ data "aws_iam_policy_document" "keda_policy_document_cw" {
       "cloudwatch:GetMetricStatistics",
       "cloudwatch:ListMetrics"
     ]
-    resources = try(var.irsa.keda.cloudwatch.arns, [])
+    # CloudWatch metric read APIs (GetMetricData/GetMetricStatistics/ListMetrics)
+    # do not support resource-level scoping; only DescribeAlarms honors ARNs.
+    resources = try(var.irsa.keda.cloudwatch.arns, ["*"])
   }
 }
 
