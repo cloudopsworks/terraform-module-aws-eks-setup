@@ -13,8 +13,10 @@
 #   ssh_admin_security_group_id: ""    # (Required) Security group ID allowed to reach the cluster and worker SSH rules.
 #   local_network_cidrs: []            # (Optional) CIDR blocks allowed to reach the private API endpoint. Default: [].
 #   vpn_accesses: []                   # (Optional) Workstation or VPN CIDR blocks allowed to reach the API endpoint. Default: [].
+#   additional_security_group_ids: []  # (Optional) Existing security group IDs granted TCP/443 ingress to the cluster API endpoint. Default: [].
+#   additional_security_groups: []     # (Optional) Existing security group names, resolved within vpc_id, granted TCP/443 ingress to the cluster API endpoint. Default: [].
 variable "vpc" {
-  description = "VPC configuration entry. Requires vpc_id, private_subnets, ssh_admin_security_group_id, and optional local_network_cidrs/vpn_accesses."
+  description = "VPC configuration entry. Requires vpc_id, private_subnets, ssh_admin_security_group_id, and optional local_network_cidrs/vpn_accesses/additional_security_group_ids/additional_security_groups."
   type        = any
 }
 

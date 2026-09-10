@@ -14,9 +14,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.42, < 7.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.53.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.9.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.3.0 |
 
 ## Modules
 
@@ -71,6 +71,7 @@
 | [aws_security_group_rule.eks_cluster_ingress_node_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.eks_master_ingress_bastion](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.eks_master_ingress_internal](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.eks_master_ingress_internal_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.eks_master_ingress_workers_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.eks_master_ingress_workstation_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.worker_ingress_bastion](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
@@ -93,6 +94,7 @@
 | [aws_iam_role.service_role_for_autoscaling](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
 | [aws_iam_role.service_role_for_spot](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_security_group.additional](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group) | data source |
 | [aws_security_group.bastion_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group) | data source |
 
 ## Inputs
@@ -122,7 +124,7 @@
 | <a name="input_role_name_compat"></a> [role\_name\_compat](#input\_role\_name\_compat) | Use legacy control-plane IAM role naming for compatibility. | `bool` | `false` | no |
 | <a name="input_self_node_groups"></a> [self\_node\_groups](#input\_self\_node\_groups) | Self-managed worker group map for the upstream EKS Terraform module. | `any` | `{}` | no |
 | <a name="input_spoke_def"></a> [spoke\_def](#input\_spoke\_def) | Spoke ID Number, must be a 3 digit number | `string` | `"001"` | no |
-| <a name="input_vpc"></a> [vpc](#input\_vpc) | VPC configuration entry. Requires vpc\_id, private\_subnets, ssh\_admin\_security\_group\_id, and optional local\_network\_cidrs/vpn\_accesses. | `any` | n/a | yes |
+| <a name="input_vpc"></a> [vpc](#input\_vpc) | VPC configuration entry. Requires vpc\_id, private\_subnets, ssh\_admin\_security\_group\_id, and optional local\_network\_cidrs/vpn\_accesses/additional\_security\_group\_ids/additional\_security\_groups. | `any` | n/a | yes |
 
 ## Outputs
 
