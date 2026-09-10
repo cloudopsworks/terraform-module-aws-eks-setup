@@ -6,6 +6,16 @@
 #       WebSite: https://cloudops.works
 #     Distributed Under Apache v2.0 License
 #
+locals {
+  additional_security_group_ids = concat(try(var.vpc.additional_security_group_ids, []), data.aws_security_group.additional.*.id)
+  additional_security_groups    = try(var.vpc.additional_security_groups, [])
+}
+
+data "aws_security_group" "additional" {
+  count  = length(local.additional_security_groups)
+  name   = local.additional_security_groups[count.index]
+  vpc_id = var.vpc.vpc_id
+}
 
 resource "aws_security_group" "cluster_default" {
   name        = "eks-${local.system_name}-def-sg"
@@ -54,27 +64,36 @@ resource "aws_security_group" "master" {
   }
 }
 
-resource "aws_security_group_rule" "eks_master_ingress_internal" {
-  count = length(try(var.vpc.local_network_cidrs, []))
+resource "aws_security_group_rule" "eks_master_ingress_internal_sg" {
+  count                    = length(local.additional_security_group_ids)
+  security_group_id        = aws_security_group.master.id
+  description              = "Allow SG ${local.additional_security_group_ids[count.index]} to communicate with the cluster API Server"
+  source_security_group_id = local.additional_security_group_ids[count.index]
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  type                     = "ingress"
+}
 
-  cidr_blocks       = [var.vpc.local_network_cidrs[count.index]]
+resource "aws_security_group_rule" "eks_master_ingress_internal" {
+  count             = length(try(var.vpc.local_network_cidrs, []))
+  security_group_id = aws_security_group.master.id
   description       = "Allow Local Network ${var.vpc.local_network_cidrs[count.index]} to communicate with the cluster API Server"
+  cidr_blocks       = [var.vpc.local_network_cidrs[count.index]]
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  security_group_id = aws_security_group.master.id
   type              = "ingress"
 }
 
 resource "aws_security_group_rule" "eks_master_ingress_workstation_https" {
-  count = length(try(var.vpc.vpn_accesses, []))
-
-  cidr_blocks       = [var.vpc.vpn_accesses[count.index]]
+  count             = length(try(var.vpc.vpn_accesses, []))
+  security_group_id = aws_security_group.master.id
   description       = "Allow workstation ${var.vpc.vpn_accesses[count.index]} to communicate with the cluster API Server"
+  cidr_blocks       = [var.vpc.vpn_accesses[count.index]]
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  security_group_id = aws_security_group.master.id
   type              = "ingress"
 }
 
