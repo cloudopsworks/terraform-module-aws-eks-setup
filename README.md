@@ -465,7 +465,7 @@ Available targets:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.42, < 7.0 |
 | <a name="requirement_cloudinit"></a> [cloudinit](#requirement\_cloudinit) | ~> 2.3 |
@@ -477,7 +477,7 @@ Available targets:
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.53.0 |
 | <a name="provider_local"></a> [local](#provider\_local) | 2.9.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.3.0 |
@@ -485,7 +485,7 @@ Available targets:
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_adot_irsa_role"></a> [adot\_irsa\_role](#module\_adot\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_autoscaler_irsa_role"></a> [autoscaler\_irsa\_role](#module\_autoscaler\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_cert_mgr_irsa_role"></a> [cert\_mgr\_irsa\_role](#module\_cert\_mgr\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
@@ -499,7 +499,7 @@ Available targets:
 | <a name="module_prometheus_irsa_role"></a> [prometheus\_irsa\_role](#module\_prometheus\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_s3_csi_irsa_role"></a> [s3\_csi\_irsa\_role](#module\_s3\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_secrets_store_irsa_role"></a> [secrets\_store\_irsa\_role](#module\_secrets\_store\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
-| <a name="module_tags"></a> [tags](#module\_tags) | cloudopsworks/tags/local | 1.0.9 |
+| <a name="module_tags"></a> [tags](#module\_tags) | cloudopsworks/tags/local | 1.0.10 |
 | <a name="module_this"></a> [this](#module\_this) | terraform-aws-modules/eks/aws | ~> 21.0 |
 | <a name="module_velero_irsa_role"></a> [velero\_irsa\_role](#module\_velero\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
 | <a name="module_vpc_cni_irsa_role"></a> [vpc\_cni\_irsa\_role](#module\_vpc\_cni\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts | ~> 6.2 |
@@ -507,7 +507,7 @@ Available targets:
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_iam_instance_profile.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_instance_profile.worker](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_role.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -564,7 +564,7 @@ Available targets:
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_cidrs"></a> [access\_cidrs](#input\_access\_cidrs) | CIDR list allowed to access the public EKS API endpoint. | `list(string)` | `[]` | no |
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Additional EKS access entries keyed by logical name. | `any` | `{}` | no |
 | <a name="input_addons"></a> [addons](#input\_addons) | Optional EKS addon toggles layered on top of the base coredns, kube-proxy, vpc-cni, and ebs-csi addons. | `any` | `{}` | no |
@@ -593,7 +593,7 @@ Available targets:
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_adot_irsa_role"></a> [adot\_irsa\_role](#output\_adot\_irsa\_role) | n/a |
 | <a name="output_autoscaler_irsa_role"></a> [autoscaler\_irsa\_role](#output\_autoscaler\_irsa\_role) | n/a |
 | <a name="output_cert_mgr_irsa_role"></a> [cert\_mgr\_irsa\_role](#output\_cert\_mgr\_irsa\_role) | n/a |
