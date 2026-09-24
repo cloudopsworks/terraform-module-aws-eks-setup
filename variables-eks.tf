@@ -20,7 +20,7 @@ variable "vpc" {
   type        = any
 }
 
-# extend_node_user_data: "" # (Optional) Extra user-data snippet reserved for node bootstrap customizations. Default: "".
+# extend_node_user_data: "" # (Optional) Reserved for node bootstrap customizations; not consumed by the module yet. Default: "".
 variable "extend_node_user_data" {
   description = "Extra user-data snippet reserved for node bootstrap customizations."
   type        = string
@@ -64,15 +64,13 @@ variable "access_entries" {
 #     desired_size: 2                   # (Optional) Desired managed node count. Default: upstream module default.
 #     min_size: 1                       # (Optional) Minimum managed node count. Default: upstream module default.
 #     max_size: 5                       # (Optional) Maximum managed node count. Default: upstream module default.
-#     instance_types: ["m6i.large"]     # (Optional) EC2 instance type list. Default: module node group defaults.
+#     instance_types: ["m6i.large"]     # (Optional) EC2 instance type list. Default: ["m6i.xlarge", "m5.xlarge", "m5a.xlarge", "m6a.xlarge"].
 #     capacity_type: "ON_DEMAND"        # (Optional) Capacity type. Valid values: ON_DEMAND, SPOT. Default: ON_DEMAND.
 #     ami_type: "AL2023_x86_64_STANDARD" # (Optional) Managed node AMI type supported by EKS. Default: upstream module default.
-#     disk_size: 50                     # (Optional) Root volume size in GB when not using block_device_mappings. Default: module node group defaults.
 #     subnet_ids: []                    # (Optional) Subnet IDs for this group. Default: vpc.private_subnets.
 #     labels: {}                        # (Optional) Kubernetes labels for nodes. Default: {}.
 #     taints: {}                        # (Optional) Kubernetes taints for nodes. Default: {}.
 #     update_config: {}                 # (Optional) Managed node update configuration. Default: upstream module default.
-#     iam_role_additional_policies: {}  # (Optional) Additional IAM policy ARNs attached to the node role. Default: {}.
 variable "node_groups" {
   description = "Managed worker group map for the upstream EKS Terraform module."
   type        = any
@@ -81,24 +79,22 @@ variable "node_groups" {
 
 # self_node_groups: {}                  # (Optional) Self-managed node groups keyed by logical name. Default: {}.
 #   default:
-#     desired_capacity: 2               # (Optional) Desired Auto Scaling Group capacity. Default: upstream module default.
+#     desired_size: 2                   # (Optional) Desired Auto Scaling Group capacity. Default: upstream module default.
 #     min_size: 1                       # (Optional) Minimum Auto Scaling Group capacity. Default: upstream module default.
 #     max_size: 5                       # (Optional) Maximum Auto Scaling Group capacity. Default: upstream module default.
-#     instance_type: "m6i.large"        # (Optional) EC2 instance type. Default: module self-managed defaults.
-#     instance_types: ["m6i.large"]     # (Optional) Mixed-instance type list. Default: module self-managed defaults.
+#     instance_type: "m6i.large"        # (Optional) EC2 instance type. Default: "m6i.xlarge".
 #     ami_type: "AL2023_x86_64_STANDARD" # (Optional) AMI family/type supported by the upstream module. Default: upstream module default.
 #     key_name: ""                      # (Optional) SSH key pair name. Default: module-generated key pair.
 #     subnet_ids: []                    # (Optional) Subnet IDs for this group. Default: vpc.private_subnets.
 #     enable_monitoring: true           # (Optional) Enable detailed monitoring. Default: upstream module default.
-#     iam_role_additional_policies: []  # (Optional) Additional IAM policy ARNs attached to the node role. Default: module self-managed defaults.
-#     bootstrap_user_data: ""           # (Optional) Bootstrap user-data content. Default: upstream module default.
+#     pre_bootstrap_user_data: ""       # (Optional) User data prepended to the node bootstrap. Default: upstream module default.
 variable "self_node_groups" {
   description = "Self-managed worker group map for the upstream EKS Terraform module."
   type        = any
   default     = {}
 }
 
-# cluster_version: "1.30" # (Optional) Kubernetes version for EKS setup or upgrade. Default: "1.20".
+# cluster_version: "1.30" # (Optional) Kubernetes version for EKS setup or upgrade. Set a version EKS currently supports; the module default "1.20" is past EKS end of support. Default: "1.20".
 variable "cluster_version" {
   description = "Kubernetes version for EKS setup or upgrade."
   type        = string
@@ -229,14 +225,14 @@ variable "private_api_server" {
   default     = true
 }
 
-# node_volume_size: 30 # (Optional) Default root EBS volume size, in GB, for node groups. Default: 30.
+# node_volume_size: 30 # (Optional) Default root EBS volume size, in GB, for EKS managed node groups (self-managed groups keep the AMI size). Default: 30.
 variable "node_volume_size" {
   description = "Default root EBS volume size, in GB, for node groups."
   type        = number
   default     = 30
 }
 
-# node_volume_type: "gp3" # (Optional) Default root EBS volume type for node groups. Valid values include gp2, gp3, io1, io2, sc1, st1. Default: "gp3".
+# node_volume_type: "gp3" # (Optional) Default root EBS volume type for EKS managed node groups. Valid values include gp2, gp3, io1, io2, sc1, st1. Default: "gp3".
 variable "node_volume_type" {
   description = "Default root EBS volume type for node groups."
   type        = string
