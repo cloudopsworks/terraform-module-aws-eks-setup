@@ -64,11 +64,13 @@ inputs = {
   {{- range .requiredVariables }}
   {{- if and $.vpc_enabled (eq .Name "vpc") }}
   vpc = {
-    vpc_id                      = dependency.vpc.outputs.vpc_id
-    private_subnets             = dependency.vpc.outputs.{{ $.subnet_source }}_subnets
-    ssh_admin_security_group_id = dependency.vpc.outputs.ssh_admin_security_group_id
-    local_network_cidrs         = try(local.local_vars.vpc.local_network_cidrs, [])
-    vpn_accesses                = dependency.vpc.outputs.vpn_accesses
+    vpc_id                        = dependency.vpc.outputs.vpc_id
+    private_subnets               = dependency.vpc.outputs.{{ $.subnet_source }}_subnets
+    ssh_admin_security_group_id   = dependency.vpc.outputs.ssh_admin_security_group_id
+    local_network_cidrs           = try(local.local_vars.vpc.local_network_cidrs, [])
+    additional_security_group_ids = try(local.local_vars.vpc.additional_security_group_ids, [])
+    additional_security_groups    = try(local.local_vars.vpc.additional_security_groups, [])
+    vpn_accesses                  = dependency.vpc.outputs.vpn_accesses
   }
   {{- else if ne .Name "org" }}
   {{ .Name }} = local.local_vars.{{ .Name }}

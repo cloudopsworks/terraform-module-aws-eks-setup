@@ -9,7 +9,7 @@ vpc:
   additional_security_group_ids: []   # (Optional) Existing security group IDs granted TCP/443 ingress to the cluster API endpoint. Example: ["sg-01234567890123456"]. Default: [].
   additional_security_groups: []      # (Optional) Existing security group names granted TCP/443 ingress to the cluster API endpoint. Each name is resolved inside vpc_id, so it must be unique within that VPC. Example: ["shared-services-sg"]. Default: [].
 
-cluster_version: "1.20"              # (Optional) Kubernetes version for EKS setup or upgrade. Default: "1.20".
+cluster_version: "1.20"              # (Optional) Kubernetes version for EKS setup or upgrade. Set a version EKS currently supports; the module default "1.20" is past EKS end of support. Default: "1.20".
 deletion_protection: null             # (Optional) Enable EKS cluster deletion protection. Valid values: true, false, null. Default: null.
 access_cidrs: []                      # (Optional) CIDR list allowed to access the public EKS API endpoint. Default: [].
 public_api_server: false              # (Optional) Enable public access to the EKS API server endpoint. Default: false.
@@ -18,9 +18,22 @@ creator_admin_permissions: true       # (Optional) Grant the Terraform caller cl
 log_group_retention: 7                # (Optional) CloudWatch log group retention period in days for EKS control-plane logs. Default: 7.
 role_name_compat: false               # (Optional) Use legacy control-plane IAM role naming for compatibility. Default: false.
 policy_iam_users: []                  # (Optional) IAM principal ARNs granted KMS key administration permissions. Default: [].
-extend_node_user_data: ""            # (Optional) Extra user-data snippet reserved for node bootstrap customizations. Default: "".
-node_volume_size: 30                  # (Optional) Default root EBS volume size, in GB, for node groups. Default: 30.
-node_volume_type: "gp3"              # (Optional) Default root EBS volume type for node groups. Valid values include gp2, gp3, io1, io2, sc1, st1. Default: "gp3".
+extend_node_user_data: ""            # (Optional) Reserved for node bootstrap customizations; not consumed by the module yet. Default: "".
+node_volume_size: 30                  # (Optional) Default root EBS volume size, in GB, for EKS managed node groups (self-managed groups keep the AMI size). Default: 30.
+node_volume_type: "gp3"              # (Optional) Default root EBS volume type for EKS managed node groups. Valid values include gp2, gp3, io1, io2, sc1, st1. Default: "gp3".
+
+# Legacy alias keys, also read by terragrunt.hcl. Each alias is used only when its primary key above
+# (or irsa, below) is removed from this file; the primary key always wins. Prefer the primary keys.
+# api_server:
+#   public: false                     # (Optional, legacy) Alias of public_api_server. Default: false.
+#   private: true                     # (Optional, legacy) Alias of private_api_server. Default: true.
+# default_node_disk_size: 30          # (Optional, legacy) Alias of node_volume_size; wins over default_node.disk.size. Default: 30.
+# default_node_disk_type: "gp3"       # (Optional, legacy) Alias of node_volume_type; wins over default_node.disk.type. Default: "gp3".
+# default_node:
+#   disk:
+#     size: 30                        # (Optional, legacy) Alias of node_volume_size. Default: 30.
+#     type: "gp3"                     # (Optional, legacy) Alias of node_volume_type. Default: "gp3".
+# irsa_configuration: {}              # (Optional, legacy) Alias of irsa, same structure. Used only when the irsa key is removed. Default: {}.
 
 node_metadata: {}                     # (Optional) IMDS metadata_options override for EKS managed node groups. Default: {}.
 # node_metadata:
@@ -34,30 +47,26 @@ node_groups: {}                       # (Optional) EKS managed node groups keyed
 #     desired_size: 2                 # (Optional) Desired managed node count. Default: upstream module default.
 #     min_size: 1                     # (Optional) Minimum managed node count. Default: upstream module default.
 #     max_size: 5                     # (Optional) Maximum managed node count. Default: upstream module default.
-#     instance_types: ["m6i.large"]   # (Optional) EC2 instance type list. Default: module node group defaults.
+#     instance_types: ["m6i.large"]   # (Optional) EC2 instance type list. Default: ["m6i.xlarge", "m5.xlarge", "m5a.xlarge", "m6a.xlarge"].
 #     capacity_type: "ON_DEMAND"      # (Optional) Capacity type. Valid values: ON_DEMAND, SPOT. Default: ON_DEMAND.
 #     ami_type: "AL2023_x86_64_STANDARD" # (Optional) Managed node AMI type supported by EKS. Default: upstream module default.
-#     disk_size: 50                   # (Optional) Root volume size in GB when not using block_device_mappings. Default: module node group defaults.
 #     subnet_ids: []                  # (Optional) Subnet IDs for this group. Default: vpc.private_subnets.
 #     labels: {}                      # (Optional) Kubernetes labels for nodes. Default: {}.
 #     taints: {}                      # (Optional) Kubernetes taints for nodes. Default: {}.
 #     update_config: {}               # (Optional) Managed node update configuration. Default: upstream module default.
-#     iam_role_additional_policies: {} # (Optional) Additional IAM policy ARNs attached to the node role. Default: {}.
 
 self_node_groups: {}                  # (Optional) Self-managed node groups keyed by logical name. Default: {}.
 # self_node_groups:
 #   default:
-#     desired_capacity: 2             # (Optional) Desired Auto Scaling Group capacity. Default: upstream module default.
+#     desired_size: 2                 # (Optional) Desired Auto Scaling Group capacity. Default: upstream module default.
 #     min_size: 1                     # (Optional) Minimum Auto Scaling Group capacity. Default: upstream module default.
 #     max_size: 5                     # (Optional) Maximum Auto Scaling Group capacity. Default: upstream module default.
-#     instance_type: "m6i.large"      # (Optional) EC2 instance type. Default: module self-managed defaults.
-#     instance_types: ["m6i.large"]   # (Optional) Mixed-instance type list. Default: module self-managed defaults.
+#     instance_type: "m6i.large"      # (Optional) EC2 instance type. Default: "m6i.xlarge".
 #     ami_type: "AL2023_x86_64_STANDARD" # (Optional) AMI family/type supported by the upstream module. Default: upstream module default.
 #     key_name: ""                    # (Optional) SSH key pair name. Default: module-generated key pair.
 #     subnet_ids: []                  # (Optional) Subnet IDs for this group. Default: vpc.private_subnets.
 #     enable_monitoring: true         # (Optional) Enable detailed monitoring. Default: upstream module default.
-#     iam_role_additional_policies: [] # (Optional) Additional IAM policy ARNs attached to the node role. Default: module self-managed defaults.
-#     bootstrap_user_data: ""         # (Optional) Bootstrap user-data content. Default: upstream module default.
+#     pre_bootstrap_user_data: ""     # (Optional) User data prepended to the node bootstrap. Default: upstream module default.
 
 access_entries: {}                    # (Optional) Additional EKS access entries keyed by logical name. Default: {}.
 # access_entries:
